@@ -5,6 +5,7 @@ export async function bootstrapExperience({
   desktopMotion,
   scopeElement,
   heroVisual,
+  heroProjects,
 }) {
   try {
     const [
@@ -12,11 +13,13 @@ export async function bootstrapExperience({
       { ScrollTrigger },
       { createHeroTimeline },
       { createSectionTransitions },
+      { createHeroProjectController },
     ] = await Promise.all([
       import('gsap'),
       import('gsap/ScrollTrigger'),
       import('../animations/heroTimeline'),
       import('../animations/sectionTransitions'),
+      import('./createHeroProjectController'),
     ])
 
     const runtime = createExperienceRuntime({
@@ -24,10 +27,12 @@ export async function bootstrapExperience({
       ScrollTrigger,
       createHeroTimeline,
       createSectionTransitions,
+      createHeroProjectController,
       reducedMotion,
       desktopMotion,
       scopeElement,
       heroVisual,
+      heroProjects,
     })
 
     if (import.meta.hot) {

@@ -25,4 +25,5 @@ bootstrapExperience({
   desktopMotion,
   scopeElement,
   heroVisual,
+  heroProjects: siteContent.hero.projects,
 })

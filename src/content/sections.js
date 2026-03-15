@@ -5,15 +5,27 @@ const nav = [
   { label: 'Contact', href: '#contact' },
 ]
 
-const projects = [
+const projectRecords = [
   {
-    id: 'agentos',
+    slug: 'agentos',
     eyebrow: 'Primary current build',
+    label: 'Primary research memo',
     name: 'agentOS',
     stage: 'Active build',
+    thesis: 'An operating system for agent memory, delegation, and execution.',
+    deckPreview: 'Research-backed infrastructure for durable multi-agent workflows.',
     summary: 'An operating system for agent memory, delegation, and execution.',
     detail:
       'The ambition is to make complex research and build workflows durable as they become multi-step and multi-agent. My interest here is not automation theater. It is operational integrity.',
+    description:
+      'agentOS is built from the view that agent workflows should not collapse into brittle prompt chains as they become multi-step, multi-tool, and multi-agent. The system is designed to preserve memory, expose delegation logic, and keep operator control intact.',
+    focus: 'Memory, delegation, state continuity, and observability.',
+    whyItMatters: 'Execution quality should improve as work becomes more complex, not decay.',
+    principles: [
+      'State continuity over prompt fragility.',
+      'Operator control over opaque automation.',
+      'Shared memory for coordinated agent work.',
+    ],
     facts: [
       {
         label: 'Thesis',
@@ -28,25 +40,62 @@ const projects = [
         value: 'Agent workflows should compound as work becomes more complex, not decay.',
       },
     ],
+    links: {
+      viewProject: '#agentos',
+      readResearch: '#research',
+    },
   },
   {
-    id: 'focusbox',
+    slug: 'focusbox',
     eyebrow: 'Supporting work',
+    label: 'Attention memo',
     name: 'FocusBox',
     stage: 'Product design',
+    thesis: 'A structured environment for deep work, ritual, and measured attention.',
+    deckPreview: 'A focus system built around ritual, environment, and feedback loops.',
     summary: 'A structured environment for deep work, ritual, and measured attention.',
     detail:
       'It treats focus as infrastructure by linking environment design, behavioral cues, and feedback loops.',
+    description:
+      'FocusBox explores the idea that builders do their best work when attention is designed with the same rigor as software. It combines ritual design, environmental cues, and measurable feedback to make deep work more repeatable.',
+    focus: 'Deliberate sessions, behavioral cues, and recovery-aware feedback loops.',
+    whyItMatters: 'Attention is leverage. Better focus systems create better decisions and better output.',
+    principles: [
+      'Environment before willpower.',
+      'Ritual creates repeatability.',
+      'Feedback closes the attention loop.',
+    ],
+    links: {
+      viewProject: '#focusbox',
+      readResearch: '#research',
+    },
   },
   {
-    id: 'trading-research-system',
+    slug: 'trading-research-system',
     eyebrow: 'Supporting work',
+    label: 'Market systems memo',
     name: 'Quant Research Platform',
     stage: 'Internal system',
+    thesis:
+      'A research system for signal mapping, scenario design, and execution under uncertainty.',
+    deckPreview: 'A structured surface for conviction, scenarios, and disciplined execution.',
     summary:
       'A research system for signal mapping, scenario design, and execution under uncertainty.',
     detail:
       'The goal is to connect macro framing, quantitative models, and execution discipline inside one research surface.',
+    description:
+      'This platform is a working environment for turning fragmented market information into structured conviction. It links macro framing, model libraries, and execution scenarios so the research process remains coherent under pressure.',
+    focus: 'Macro framing, systematic models, and disciplined execution scenarios.',
+    whyItMatters: 'Better decisions come from better structure, not simply more information.',
+    principles: [
+      'Signal first, narrative second.',
+      'Scenario design before action.',
+      'Structure should survive pressure.',
+    ],
+    links: {
+      viewProject: '#trading-research-system',
+      readResearch: '#research',
+    },
   },
 ]
 
@@ -101,76 +150,6 @@ const links = [
   { label: 'X / Thomas_0822', href: 'https://x.com/Thomas_0822', external: true },
 ]
 
-export const siteContent = {
-  meta: {
-    title: 'Thomas Chiu | Founder-builder across markets, systems, and AI agents',
-    description:
-      'Thomas Chiu is a founder-builder, investor, and trader building agentOS, quantitative research infrastructure, and execution systems across markets, software, and AI agents.',
-  },
-  hero: {
-    name: 'Thomas Chiu',
-    eyebrow: 'Thomas Chiu / Founder-builder, investor, trader',
-    headline: 'I build systems for judgment, execution, and long-horizon leverage.',
-    positioning:
-      'Across markets, software, and AI agents, my work turns research into operational systems.',
-    subtext:
-      'agentOS is the clearest expression of that thesis: an operating system for agent memory, delegation, and execution, built from a research-first view of coordinated work.',
-    proof: ['Founder-builder', 'Research-led', 'Markets + AI agents'],
-    primaryCta: 'Current Work',
-    secondaryCta: 'Research Lens',
-    micro:
-      'Founder-builder first. Investor and trader by discipline. Research depth as the edge.',
-    visualBadge: 'Founder research memo',
-    visualHint: 'Current note / Mar 2026',
-    note: {
-      label: 'Primary research memo',
-      title: 'agentOS',
-      body:
-        'An operating system for agent memory, delegation, and execution. The idea is simple: research loops should not collapse when work becomes multi-step, multi-tool, and multi-agent.',
-      rows: [
-        {
-          label: 'Thesis',
-          value: 'Research-backed infrastructure for coordinated agent work.',
-        },
-        {
-          label: 'Current focus',
-          value: 'Memory, delegation, state continuity, and observability.',
-        },
-        {
-          label: 'Why it matters',
-          value: 'Execution quality should improve as work becomes more complex, not decay.',
-        },
-      ],
-    },
-  },
-  nav,
-  projects,
-  research: {
-    label: 'Research lens',
-    title: 'How I think before I build.',
-    intro:
-      'The products are downstream of recurring questions about market structure, decision-making, and coordinated machine work.',
-    archiveLabel: 'Selected working notes',
-    archiveMeta: 'Research archive / Mar 2026',
-    directions: researchDirections,
-    notes: researchNotes,
-  },
-  about: {
-    label: 'Operating principles',
-    title: 'Systems are only useful when they hold under pressure.',
-    intro:
-      'The standards are simple: build for signal, treat execution as design, and prefer structures that compound when conditions get messy.',
-    principles,
-  },
-  links,
-  contact: {
-    label: 'Closing note',
-    title: 'Research depth is only useful if it leads to systems that hold.',
-    body:
-      'I am interested in conversations at the intersection of markets, software systems, and AI agents, especially where better structure leads to better execution.',
-  },
-}
-
 function renderNav(items) {
   return items
     .map((item) => `<a class="nav-link" href="${item.href}">${item.label}</a>`)
@@ -181,22 +160,41 @@ function renderHeroProof(items) {
   return items.map((item) => `<span class="hero-proof__item">${item}</span>`).join('')
 }
 
-function renderHeroNoteRows(items) {
+function renderHeroProjectCards(items, activeSlug) {
+  const activeIndex = items.findIndex((item) => item.slug === activeSlug)
+
   return items
-    .map(
-      (item) => `
-        <div class="hero-note__row">
-          <dt class="hero-note__row-label">${item.label}</dt>
-          <dd class="hero-note__row-value">${item.value}</dd>
-        </div>
-      `,
-    )
+    .map((item, index) => {
+      const stackPosition = (index - activeIndex + items.length) % items.length
+      const isActive = item.slug === activeSlug
+
+      return `
+        <button
+          type="button"
+          class="hero-project-card"
+          data-project-card="${item.slug}"
+          data-project-target="${item.links?.viewProject ?? ''}"
+          data-stack-position="${stackPosition}"
+          data-active="${isActive}"
+          aria-label="${item.name}: ${item.thesis}"
+        >
+          <div class="hero-project-card__topline">
+            <span class="hero-project-card__label">${item.label}</span>
+            <span class="hero-project-card__stage">${item.stage}</span>
+          </div>
+          <h2 class="hero-project-card__name">${item.name}</h2>
+          <p class="hero-project-card__thesis">${item.thesis}</p>
+          <p class="hero-project-card__preview">${item.deckPreview}</p>
+          <span class="hero-project-card__action">View section</span>
+        </button>
+      `
+    })
     .join('')
 }
 
 function renderLeadProject(item) {
   return `
-    <article id="${item.id}" class="current-work-card current-work-card--lead js-section-reveal">
+    <article id="${item.slug}" class="current-work-card current-work-card--lead js-section-reveal">
       <div class="current-work-card__topline">
         <p class="current-work-card__eyebrow">${item.eyebrow}</p>
         <p class="current-work-card__stage">${item.stage}</p>
@@ -224,7 +222,7 @@ function renderSupportingProjects(items) {
   return items
     .map(
       (item) => `
-        <article id="${item.id}" class="current-work-card current-work-card--support js-section-reveal">
+        <article id="${item.slug}" class="current-work-card current-work-card--support js-section-reveal">
           <div class="current-work-card__topline">
             <p class="current-work-card__eyebrow">${item.eyebrow}</p>
             <p class="current-work-card__stage">${item.stage}</p>
@@ -306,7 +304,67 @@ function renderLinks(items) {
     .join('')
 }
 
+const heroProjects = projectRecords
+const defaultHeroProject = heroProjects[0]
+
+export const siteContent = {
+  meta: {
+    title: 'Thomas Chiu | Founder-builder across markets, systems, and AI agents',
+    description:
+      'Thomas Chiu is a founder-builder, investor, and trader building agentOS, quantitative research infrastructure, and execution systems across markets, software, and AI agents.',
+  },
+  hero: {
+    name: 'Thomas Chiu',
+    eyebrow: 'Thomas Chiu / Founder-builder, investor, trader',
+    headline: 'I build systems for judgment, execution, and long-horizon leverage.',
+    positioning:
+      'Across markets, software, and AI agents, my work turns research into operational systems.',
+    subtext:
+      'agentOS is the clearest expression of that thesis, but the larger pattern is consistent: research first, then infrastructure, then execution.',
+    proof: ['Founder-builder', 'Research-led', 'Markets + AI agents'],
+    primaryCta: 'Current Work',
+    secondaryCta: 'Research Lens',
+    micro:
+      'Founder-builder first. Investor and trader by discipline. Research depth as the edge.',
+    visualBadge: 'Project memo deck',
+    visualHint: 'Hover a card to preview it. Click to jump to the section.',
+    projectsLabel: 'Project deck',
+    activeProject: defaultHeroProject.slug,
+    projects: heroProjects,
+  },
+  nav,
+  projects: projectRecords,
+  research: {
+    label: 'Research lens',
+    title: 'How I think before I build.',
+    intro:
+      'The products are downstream of recurring questions about market structure, decision-making, and coordinated machine work.',
+    archiveLabel: 'Selected working notes',
+    archiveMeta: 'Research archive / Mar 2026',
+    directions: researchDirections,
+    notes: researchNotes,
+  },
+  about: {
+    label: 'Operating principles',
+    title: 'Systems are only useful when they hold under pressure.',
+    intro:
+      'The standards are simple: build for signal, treat execution as design, and prefer structures that compound when conditions get messy.',
+    principles,
+  },
+  links,
+  contact: {
+    label: 'Closing note',
+    title: 'Research depth is only useful if it leads to systems that hold.',
+    body:
+      'I am interested in conversations at the intersection of markets, software systems, and AI agents, especially where better structure leads to better execution.',
+  },
+}
+
 export function renderPage(content = siteContent) {
+  const activeHeroProject =
+    content.hero.projects.find((item) => item.slug === content.hero.activeProject) ??
+    content.hero.projects[0]
+
   return `
     <div class="site-shell">
       <div class="scene-shell" aria-hidden="true">
@@ -344,16 +402,19 @@ export function renderPage(content = siteContent) {
             <div class="hero-visual js-hero-visual">
               <div class="hero-visual__badge js-hero-visual-badge">${content.hero.visualBadge}</div>
               <p class="hero-visual__hint js-hero-visual-hint">${content.hero.visualHint}</p>
-              <div class="hero-tooltip js-hero-tooltip" hidden></div>
-              <aside class="hero-systems-card hero-note js-hero-card" aria-label="${content.hero.note.title}">
-                <div class="hero-note__head">
-                  <p class="hero-systems-card__label">${content.hero.note.label}</p>
+              <aside
+                class="hero-systems-card hero-projects js-hero-card js-hero-projects"
+                aria-label="${content.hero.projectsLabel}"
+                data-active-project="${activeHeroProject.slug}"
+              >
+                <div class="hero-projects__nav">
+                  <p class="hero-systems-card__label">${content.hero.projectsLabel}</p>
+                  <p class="hero-projects__nav-note">Hover to preview</p>
                 </div>
-                <h2 class="hero-note__title">${content.hero.note.title}</h2>
-                <p class="hero-note__body">${content.hero.note.body}</p>
-                <dl class="hero-note__rows">
-                  ${renderHeroNoteRows(content.hero.note.rows)}
-                </dl>
+
+                <div id="hero-project-surface" class="hero-projects__deck">
+                  ${renderHeroProjectCards(content.hero.projects, activeHeroProject.slug)}
+                </div>
               </aside>
             </div>
           </div>

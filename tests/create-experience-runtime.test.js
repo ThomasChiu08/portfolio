@@ -23,20 +23,25 @@ describe('createExperienceRuntime', () => {
     const refresh = vi.fn()
     const createHeroTimeline = vi.fn()
     const createSectionTransitions = vi.fn()
+    const heroProjectController = { destroy: vi.fn() }
+    const createHeroProjectController = vi.fn(() => heroProjectController)
 
     const runtime = createExperienceRuntime({
       gsap: { registerPlugin, context },
       ScrollTrigger: { refresh },
       createHeroTimeline,
       createSectionTransitions,
+      createHeroProjectController,
       reducedMotion: false,
       desktopMotion: true,
       scopeElement: document.querySelector('#app'),
       heroVisual: document.createElement('div'),
+      heroProjects: [{ slug: 'agentos' }],
     })
 
     expect(registerPlugin).toHaveBeenCalledTimes(1)
     expect(context).toHaveBeenCalledTimes(1)
+    expect(createHeroProjectController).toHaveBeenCalledTimes(1)
     expect(createHeroTimeline).toHaveBeenCalledTimes(1)
     expect(createSectionTransitions).toHaveBeenCalledTimes(1)
     expect(refresh).toHaveBeenCalledTimes(1)
@@ -44,6 +49,7 @@ describe('createExperienceRuntime', () => {
     runtime.destroy()
 
     expect(revert).toHaveBeenCalledTimes(1)
+    expect(heroProjectController.destroy).toHaveBeenCalledTimes(1)
     expect(document.documentElement.style.getPropertyValue('--accent')).toBe('')
     expect(document.documentElement.style.getPropertyValue('--accent-soft')).toBe('')
     expect(document.documentElement.style.getPropertyValue('--scene-wash')).toBe('')
