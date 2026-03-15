@@ -1,5 +1,12 @@
+import { getScrollMotionPreset } from './motionPresets'
+
 export function createScrollTimeline({ gsap, reducedMotion, sceneController }) {
-  const { camera, core, sceneState } = sceneController
+  const { core, sceneState, profile } = sceneController
+  const { scrub, stage0, stage1, stage2 } = getScrollMotionPreset({
+    reducedMotion,
+    profile,
+    sceneState,
+  })
 
   return gsap
     .timeline({
@@ -10,135 +17,125 @@ export function createScrollTimeline({ gsap, reducedMotion, sceneController }) {
         trigger: '.page',
         start: 'top top',
         end: 'bottom bottom',
-        scrub: reducedMotion ? 0.75 : 1.35,
+        scrub,
       },
     })
     .to(
       core.group.position,
-      {
-        x: 0.8,
-        y: 0.1,
-      },
+      stage0.groupPosition,
       0,
     )
     .to(
       core.group.rotation,
-      {
-        y: 0.35,
-        x: 0.08,
-      },
-      0,
-    )
-    .to(
-      camera.position,
-      {
-        x: 0.25,
-        y: 0.12,
-        z: 7.2,
-      },
+      stage0.groupRotation,
       0,
     )
     .to(
       sceneState,
       {
-        palette: 0.9,
-        drift: 0.28,
-        particleSpin: 0.18,
-        corePulse: 0.2,
+        cameraBaseX: stage0.camera.x,
+        cameraBaseY: stage0.camera.y,
+        cameraBaseZ: stage0.camera.z,
       },
+      0,
+    )
+    .to(
+      sceneState,
+      stage0.scene,
       0,
     )
     .to(
       '.scene-shell__grid',
       {
-        opacity: 0.26,
+        opacity: stage0.gridOpacity,
       },
+      0,
+    )
+    .to(
+      '.js-hero-card',
+      stage0.card,
+      0,
+    )
+    .to(
+      '.js-hero-visual-badge',
+      stage0.badge ?? {},
       0,
     )
     .to(
       core.group.position,
-      {
-        x: -1.05,
-        y: -0.08,
-      },
+      stage1.groupPosition,
       1,
     )
     .to(
       core.group.rotation,
-      {
-        y: 1.3,
-        x: 0.38,
-      },
-      1,
-    )
-    .to(
-      camera.position,
-      {
-        x: -0.28,
-        y: -0.18,
-        z: 6.8,
-      },
+      stage1.groupRotation,
       1,
     )
     .to(
       sceneState,
       {
-        palette: 1.95,
-        drift: 0.62,
-        particleSpin: 0.34,
-        particleTilt: 0.25,
-        corePulse: 0.44,
+        cameraBaseX: stage1.camera.x,
+        cameraBaseY: stage1.camera.y,
+        cameraBaseZ: stage1.camera.z,
       },
+      1,
+    )
+    .to(
+      sceneState,
+      stage1.scene,
       1,
     )
     .to(
       '.scene-shell__grid',
       {
-        opacity: 0.18,
+        opacity: stage1.gridOpacity,
       },
+      1,
+    )
+    .to(
+      '.js-hero-card',
+      stage1.card,
+      1,
+    )
+    .to(
+      '.js-hero-visual-badge',
+      stage1.badge ?? {},
       1,
     )
     .to(
       core.group.position,
-      {
-        x: 0.55,
-        y: -0.18,
-      },
+      stage2.groupPosition,
       2,
     )
     .to(
       core.group.rotation,
-      {
-        y: 2.35,
-        x: 0.64,
-      },
-      2,
-    )
-    .to(
-      camera.position,
-      {
-        x: 0.12,
-        y: -0.08,
-        z: 7.05,
-      },
+      stage2.groupRotation,
       2,
     )
     .to(
       sceneState,
       {
-        palette: 2.8,
-        drift: 0.9,
-        particleSpin: 0.5,
-        particleTilt: 0.42,
-        corePulse: 0.72,
+        cameraBaseX: stage2.camera.x,
+        cameraBaseY: stage2.camera.y,
+        cameraBaseZ: stage2.camera.z,
       },
+      2,
+    )
+    .to(
+      sceneState,
+      stage2.scene,
       2,
     )
     .to(
       '.scene-shell__grid',
       {
-        opacity: 0.12,
+        opacity: stage2.gridOpacity,
       },
+      2,
+    )
+    .to(
+      '.js-hero-card',
+      stage2.card,
       2,
     )
 }
