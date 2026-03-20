@@ -1,3 +1,5 @@
+import { renderGlassyButton } from './glassyButton'
+
 const nav = [
   { label: 'Work', href: '#projects' },
   { label: 'Research', href: '#research' },
@@ -160,36 +162,82 @@ function renderHeroProof(items) {
   return items.map((item) => `<span class="hero-proof__item">${item}</span>`).join('')
 }
 
-function renderHeroProjectCards(items, activeSlug) {
-  const activeIndex = items.findIndex((item) => item.slug === activeSlug)
+function formatProjectIndex(index) {
+  return String(index + 1).padStart(2, '0')
+}
 
+function renderHeroProjectRail(items, activeSlug) {
   return items
     .map((item, index) => {
-      const stackPosition = (index - activeIndex + items.length) % items.length
       const isActive = item.slug === activeSlug
 
       return `
         <button
           type="button"
-          class="hero-project-card"
-          data-project-card="${item.slug}"
+          class="hero-project-rail__item"
+          data-project-rail="${item.slug}"
           data-project-target="${item.links?.viewProject ?? ''}"
-          data-stack-position="${stackPosition}"
           data-active="${isActive}"
-          aria-label="${item.name}: ${item.thesis}"
+          data-committed="${isActive}"
+          aria-label="Switch to ${item.name}"
         >
-          <div class="hero-project-card__topline">
-            <span class="hero-project-card__label">${item.label}</span>
-            <span class="hero-project-card__stage">${item.stage}</span>
-          </div>
-          <h2 class="hero-project-card__name">${item.name}</h2>
-          <p class="hero-project-card__thesis">${item.thesis}</p>
-          <p class="hero-project-card__preview">${item.deckPreview}</p>
-          <span class="hero-project-card__action">View section</span>
+          <span class="hero-project-rail__index">${formatProjectIndex(index)}</span>
+          <span class="hero-project-rail__text">
+            <span class="hero-project-rail__name">${item.name}</span>
+            <span class="hero-project-rail__meta">${item.stage}</span>
+          </span>
+          <span class="hero-project-rail__dot" aria-hidden="true"></span>
         </button>
       `
     })
     .join('')
+}
+
+function renderHeroProjectPanel(item, items) {
+  const activeIndex = items.findIndex((project) => project.slug === item.slug)
+
+  return `
+    <div class="hero-projects__surface">
+      <article class="hero-projects__panel" data-project-panel data-panel-project="${item.slug}">
+        <div class="hero-projects__panel-head">
+          <div class="hero-projects__panel-count">
+            <span class="hero-projects__panel-index" data-project-index>${formatProjectIndex(activeIndex)}</span>
+            <span class="hero-projects__panel-total">/ ${formatProjectIndex(items.length - 1)}</span>
+          </div>
+          <p class="hero-projects__panel-state" data-project-state-label>Current selection</p>
+        </div>
+
+        <div class="hero-projects__panel-topline">
+          <span class="hero-projects__panel-label" data-project-label>${item.label}</span>
+          <span class="hero-projects__panel-stage" data-project-stage>${item.stage}</span>
+        </div>
+
+        <div class="hero-projects__panel-body">
+          <h2 class="hero-projects__panel-name" data-project-name>${item.name}</h2>
+          <p class="hero-projects__panel-thesis" data-project-thesis>${item.thesis}</p>
+          <p class="hero-projects__panel-support" data-project-support>${item.deckPreview}</p>
+        </div>
+
+        <div class="hero-projects__panel-footer">
+          <p class="hero-projects__panel-statusline" data-project-statusline>Selected memo / ${item.stage}</p>
+          ${renderGlassyButton({
+            label: 'Open memo',
+            icon: 'arrow-up-right',
+            size: 'sm',
+            tone: 'neutral',
+            className: 'hero-projects__cta',
+            attributes: {
+              'data-project-open': true,
+            },
+          })}
+        </div>
+      </article>
+
+      <div class="hero-projects__rail" aria-label="Project index">
+        ${renderHeroProjectRail(items, item.slug)}
+      </div>
+    </div>
+  `
 }
 
 function renderLeadProject(item) {
@@ -327,7 +375,7 @@ export const siteContent = {
     micro:
       'Founder-builder first. Investor and trader by discipline. Research depth as the edge.',
     visualBadge: 'Project memo deck',
-    visualHint: 'Hover a card to preview it. Click to jump to the section.',
+    visualHint: 'Preview a project memo, then open the section.',
     projectsLabel: 'Project deck',
     activeProject: defaultHeroProject.slug,
     projects: heroProjects,
@@ -368,7 +416,10 @@ export function renderPage(content = siteContent) {
   return `
     <div class="site-shell">
       <div class="scene-shell" aria-hidden="true">
+        <div class="scene-shell__atmosphere scene-shell__atmosphere--primary"></div>
+        <div class="scene-shell__atmosphere scene-shell__atmosphere--secondary"></div>
         <div class="scene-shell__grid"></div>
+        <canvas class="scene-shell__signals"></canvas>
         <div class="scene-shell__vignette"></div>
       </div>
 
@@ -376,6 +427,14 @@ export function renderPage(content = siteContent) {
         <div class="container masthead__inner">
           <a class="brand" href="#hero">${content.hero.name}</a>
           <nav class="masthead__nav" aria-label="Primary">
+            ${renderGlassyButton({
+              href: '#hero',
+              icon: 'home',
+              size: 'sm',
+              tone: 'neutral',
+              className: 'masthead__home-button',
+              ariaLabel: 'Back to top',
+            })}
             ${renderNav(content.nav)}
           </nav>
         </div>
@@ -393,8 +452,22 @@ export function renderPage(content = siteContent) {
                 ${renderHeroProof(content.hero.proof)}
               </div>
               <div class="hero-actions js-hero-actions">
-                <a class="button-link" href="#projects">${content.hero.primaryCta}</a>
-                <a class="text-link" href="#research">${content.hero.secondaryCta}</a>
+                ${renderGlassyButton({
+                  href: '#projects',
+                  label: content.hero.primaryCta,
+                  icon: 'arrow-right',
+                  size: 'md',
+                  tone: 'warm',
+                  className: 'hero-actions__primary',
+                })}
+                ${renderGlassyButton({
+                  href: '#research',
+                  label: content.hero.secondaryCta,
+                  icon: 'spark',
+                  size: 'md',
+                  tone: 'neutral',
+                  className: 'hero-actions__secondary',
+                })}
               </div>
               <p class="hero-micro js-hero-micro">${content.hero.micro}</p>
             </div>
@@ -406,14 +479,17 @@ export function renderPage(content = siteContent) {
                 class="hero-systems-card hero-projects js-hero-card js-hero-projects"
                 aria-label="${content.hero.projectsLabel}"
                 data-active-project="${activeHeroProject.slug}"
+                data-switch-state="idle"
               >
+                <div class="hero-projects__aura" aria-hidden="true"></div>
+                <div class="hero-projects__veil" aria-hidden="true"></div>
                 <div class="hero-projects__nav">
                   <p class="hero-systems-card__label">${content.hero.projectsLabel}</p>
-                  <p class="hero-projects__nav-note">Hover to preview</p>
+                  <p class="hero-projects__nav-note" data-project-deck-note>Hover a memo to preview</p>
                 </div>
 
-                <div id="hero-project-surface" class="hero-projects__deck">
-                  ${renderHeroProjectCards(content.hero.projects, activeHeroProject.slug)}
+                <div id="hero-project-surface" class="hero-projects__switcher">
+                  ${renderHeroProjectPanel(activeHeroProject, content.hero.projects)}
                 </div>
               </aside>
             </div>

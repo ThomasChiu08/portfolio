@@ -1,37 +1,14 @@
 import { createExperienceRuntime } from './createExperienceRuntime'
+import { loadExperienceModules } from './loadExperienceModules'
 
-export async function bootstrapExperience({
-  reducedMotion,
-  desktopMotion,
-  scopeElement,
-  heroVisual,
-  heroProjects,
-}) {
+export async function bootstrapExperience({ motion, scopeElement, heroProjects }) {
   try {
-    const [
-      { default: gsap },
-      { ScrollTrigger },
-      { createHeroTimeline },
-      { createSectionTransitions },
-      { createHeroProjectController },
-    ] = await Promise.all([
-      import('gsap'),
-      import('gsap/ScrollTrigger'),
-      import('../animations/heroTimeline'),
-      import('../animations/sectionTransitions'),
-      import('./createHeroProjectController'),
-    ])
+    const modules = await loadExperienceModules()
 
     const runtime = createExperienceRuntime({
-      gsap,
-      ScrollTrigger,
-      createHeroTimeline,
-      createSectionTransitions,
-      createHeroProjectController,
-      reducedMotion,
-      desktopMotion,
+      modules,
+      motion,
       scopeElement,
-      heroVisual,
       heroProjects,
     })
 

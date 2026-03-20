@@ -1,9 +1,21 @@
-function clampIndex(value, length) {
-  return ((value % length) + length) % length
-}
+import {
+  HERO_PROJECT_SWITCH_STATES,
+  clampIndex,
+  createHeroProjectSwitcherModel,
+} from './heroProjectSwitcherModel'
+import {
+  collectHeroProjectSwitcherElements,
+  syncHeroProjectSwitcherView,
+} from './heroProjectSwitcherView'
+
+const TRANSITION_RESET_MS = 420
 
 function getScrollBehavior() {
   return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
+}
+
+function prefersCoarsePointer() {
+  return window.matchMedia?.('(pointer: coarse)').matches ?? false
 }
 
 export function createHeroProjectController({ scopeElement, projects = [] }) {
@@ -15,40 +27,102 @@ export function createHeroProjectController({ scopeElement, projects = [] }) {
     }
   }
 
-  const cards = Array.from(root.querySelectorAll('[data-project-card]'))
-  const projectIndex = new Map(projects.map((project, index) => [project.slug, index]))
-  let activeIndex = clampIndex(projectIndex.get(root.dataset.activeProject) ?? 0, projects.length)
+  const elements = collectHeroProjectSwitcherElements(root)
+  const model = createHeroProjectSwitcherModel(projects)
+  const touchMode = prefersCoarsePointer()
+  const initialIndex = model.getProjectIndex(root.dataset.activeProject)
+
+  let activeIndex = clampIndex(initialIndex < 0 ? 0 : initialIndex, projects.length)
+  let committedIndex = activeIndex
+  let switchState = HERO_PROJECT_SWITCH_STATES.idle
+  let hasCommittedSelection = false
+  let transitionResetTimeout = null
   let spotlightTimeout = null
+  let spotlightElement = null
 
-  function getActiveProject() {
-    return projects[activeIndex]
+  function getProject(index = activeIndex) {
+    return model.getProject(index)
   }
 
-  function updateCards() {
-    cards.forEach((card) => {
-      const cardIndex = projectIndex.get(card.dataset.projectCard)
-      const stackPosition = clampIndex(cardIndex - activeIndex, projects.length)
-      const isActive = cardIndex === activeIndex
-
-      card.dataset.stackPosition = String(stackPosition)
-      card.dataset.active = isActive ? 'true' : 'false'
-      card.style.zIndex = String(projects.length - stackPosition)
-      card.tabIndex = isActive ? 0 : -1
-      card.setAttribute('aria-current', isActive ? 'true' : 'false')
-    })
-
-    root.dataset.activeProject = getActiveProject().slug
-  }
-
-  function setActiveProject(slug) {
-    const nextIndex = projectIndex.get(slug)
-
-    if (typeof nextIndex !== 'number' || nextIndex === activeIndex) {
+  function clearTransitionResetTimeout() {
+    if (!transitionResetTimeout) {
       return
     }
 
+    window.clearTimeout(transitionResetTimeout)
+    transitionResetTimeout = null
+  }
+
+  function updatePointerGlow(clientX, clientY) {
+    const rect = root.getBoundingClientRect()
+
+    if (!rect.width || !rect.height) {
+      return
+    }
+
+    const x = Math.min(Math.max(((clientX - rect.left) / rect.width) * 100, 18), 86)
+    const y = Math.min(Math.max(((clientY - rect.top) / rect.height) * 100, 18), 84)
+    root.style.setProperty('--deck-glow-x', `${x}%`)
+    root.style.setProperty('--deck-glow-y', `${y}%`)
+  }
+
+  function resetPointerGlow() {
+    root.style.setProperty('--deck-glow-x', '74%')
+    root.style.setProperty('--deck-glow-y', '34%')
+  }
+
+  function updateView() {
+    syncHeroProjectSwitcherView({
+      root,
+      elements,
+      activeProject: getProject(activeIndex),
+      committedProject: getProject(committedIndex),
+      activeIndex,
+      committedIndex,
+      projectIndex: model.projectIndex,
+      switchState,
+      touchMode,
+    })
+  }
+
+  function setSwitchState(nextState) {
+    switchState = nextState
+    updateView()
+  }
+
+  function setActiveProject(slug) {
+    const nextIndex = model.getProjectIndex(slug)
+
+    if (nextIndex < 0) {
+      return false
+    }
+
     activeIndex = nextIndex
-    updateCards()
+    updateView()
+    return true
+  }
+
+  function previewProject(slug) {
+    clearTransitionResetTimeout()
+
+    if (!setActiveProject(slug)) {
+      return
+    }
+
+    setSwitchState(HERO_PROJECT_SWITCH_STATES.candidate)
+  }
+
+  function commitActiveProject() {
+    clearTransitionResetTimeout()
+    committedIndex = activeIndex
+    hasCommittedSelection = true
+    setSwitchState(HERO_PROJECT_SWITCH_STATES.committed)
+  }
+
+  function restoreCommittedProject() {
+    clearTransitionResetTimeout()
+    activeIndex = committedIndex
+    setSwitchState(hasCommittedSelection ? HERO_PROJECT_SWITCH_STATES.committed : HERO_PROJECT_SWITCH_STATES.idle)
   }
 
   function spotlightTarget(target) {
@@ -56,6 +130,11 @@ export function createHeroProjectController({ scopeElement, projects = [] }) {
       return
     }
 
+    if (spotlightElement && spotlightElement !== target) {
+      delete spotlightElement.dataset.spotlight
+    }
+
+    spotlightElement = target
     target.dataset.spotlight = 'true'
 
     if (spotlightTimeout) {
@@ -64,12 +143,13 @@ export function createHeroProjectController({ scopeElement, projects = [] }) {
 
     spotlightTimeout = window.setTimeout(() => {
       delete target.dataset.spotlight
+      spotlightElement = null
       spotlightTimeout = null
     }, 1600)
   }
 
   function navigateToProject(slug) {
-    const project = projects[projectIndex.get(slug)]
+    const project = model.getProjectBySlug(slug)
     const targetSelector = project?.links?.viewProject
 
     if (!targetSelector || !targetSelector.startsWith('#')) {
@@ -82,82 +162,171 @@ export function createHeroProjectController({ scopeElement, projects = [] }) {
       return
     }
 
+    setSwitchState(HERO_PROJECT_SWITCH_STATES.transition)
     spotlightTarget(target)
     target.scrollIntoView({
       behavior: getScrollBehavior(),
       block: 'start',
     })
     window.history.replaceState(null, '', targetSelector)
+    transitionResetTimeout = window.setTimeout(() => {
+      setSwitchState(hasCommittedSelection ? HERO_PROJECT_SWITCH_STATES.committed : HERO_PROJECT_SWITCH_STATES.idle)
+    }, TRANSITION_RESET_MS)
+  }
+
+  function getRailButton(target) {
+    const railButton = target.closest?.('[data-project-rail]')
+
+    if (!railButton || !root.contains(railButton)) {
+      return null
+    }
+
+    return railButton
+  }
+
+  function handlePointerMove(event) {
+    if (touchMode) {
+      return
+    }
+
+    updatePointerGlow(event.clientX, event.clientY)
   }
 
   function handlePointerOver(event) {
-    const card = event.target.closest('[data-project-card]')
-
-    if (!card || !root.contains(card)) {
+    if (touchMode || switchState === HERO_PROJECT_SWITCH_STATES.transition) {
       return
     }
 
-    setActiveProject(card.dataset.projectCard)
+    const railButton = getRailButton(event.target)
+
+    if (!railButton) {
+      return
+    }
+
+    previewProject(railButton.dataset.projectRail)
+  }
+
+  function handlePointerLeave() {
+    resetPointerGlow()
+
+    if (touchMode || switchState !== HERO_PROJECT_SWITCH_STATES.candidate) {
+      return
+    }
+
+    restoreCommittedProject()
   }
 
   function handleFocusIn(event) {
-    const card = event.target.closest('[data-project-card]')
+    const railButton = getRailButton(event.target)
 
-    if (!card || !root.contains(card)) {
+    if (!railButton || switchState === HERO_PROJECT_SWITCH_STATES.transition) {
       return
     }
 
-    setActiveProject(card.dataset.projectCard)
+    previewProject(railButton.dataset.projectRail)
   }
 
   function handleClick(event) {
-    const card = event.target.closest('[data-project-card]')
+    const railButton = getRailButton(event.target)
 
-    if (!card || !root.contains(card)) {
+    if (railButton) {
+      setActiveProject(railButton.dataset.projectRail)
+      commitActiveProject()
       return
     }
 
-    setActiveProject(card.dataset.projectCard)
-    navigateToProject(card.dataset.projectCard)
+    const openTarget = event.target.closest?.('[data-project-open]')
+
+    if (!openTarget || !root.contains(openTarget)) {
+      return
+    }
+
+    navigateToProject(getProject(activeIndex).slug)
   }
 
   function handleKeydown(event) {
-    const card = event.target.closest('[data-project-card]')
+    const railButton = getRailButton(event.target)
+    const openTarget = event.target.closest?.('[data-project-open]')
 
-    if (!card || !root.contains(card)) {
+    if (railButton) {
+      const currentIndex = model.getProjectIndex(railButton.dataset.projectRail)
+      const safeCurrentIndex = currentIndex < 0 ? activeIndex : currentIndex
+
+      if (event.key === 'ArrowDown' || event.key === 'ArrowRight') {
+        event.preventDefault()
+        const nextIndex = clampIndex(safeCurrentIndex + 1, projects.length)
+        const nextProject = getProject(nextIndex)
+
+        previewProject(nextProject.slug)
+        root.querySelector(`[data-project-rail="${nextProject.slug}"]`)?.focus()
+        return
+      }
+
+      if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') {
+        event.preventDefault()
+        const nextIndex = clampIndex(safeCurrentIndex - 1, projects.length)
+        const nextProject = getProject(nextIndex)
+
+        previewProject(nextProject.slug)
+        root.querySelector(`[data-project-rail="${nextProject.slug}"]`)?.focus()
+        return
+      }
+
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault()
+        setActiveProject(railButton.dataset.projectRail)
+        commitActiveProject()
+        return
+      }
+    }
+
+    if (openTarget && (event.key === 'Enter' || event.key === ' ')) {
+      event.preventDefault()
+      navigateToProject(getProject(activeIndex).slug)
       return
     }
 
-    if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') {
-      return
+    if (event.key === 'Escape') {
+      event.preventDefault()
+      restoreCommittedProject()
     }
-
-    event.preventDefault()
-    const direction = event.key === 'ArrowRight' ? 1 : -1
-    const nextIndex = clampIndex(activeIndex + direction, projects.length)
-    const nextProject = projects[nextIndex]
-
-    setActiveProject(nextProject.slug)
-    root.querySelector(`[data-project-card="${nextProject.slug}"]`)?.focus()
   }
 
+  root.addEventListener('pointermove', handlePointerMove)
   root.addEventListener('pointerover', handlePointerOver)
+  root.addEventListener('pointerleave', handlePointerLeave)
   root.addEventListener('focusin', handleFocusIn)
   root.addEventListener('click', handleClick)
   root.addEventListener('keydown', handleKeydown)
 
-  updateCards()
+  resetPointerGlow()
+  updateView()
 
   return {
     destroy() {
+      clearTransitionResetTimeout()
+
       if (spotlightTimeout) {
         window.clearTimeout(spotlightTimeout)
+        spotlightTimeout = null
       }
 
+      if (spotlightElement) {
+        delete spotlightElement.dataset.spotlight
+        spotlightElement = null
+      }
+
+      root.removeEventListener('pointermove', handlePointerMove)
       root.removeEventListener('pointerover', handlePointerOver)
+      root.removeEventListener('pointerleave', handlePointerLeave)
       root.removeEventListener('focusin', handleFocusIn)
       root.removeEventListener('click', handleClick)
       root.removeEventListener('keydown', handleKeydown)
+      root.style.removeProperty('--deck-glow-x')
+      root.style.removeProperty('--deck-glow-y')
+      root.removeAttribute('data-touch-mode')
+      root.removeAttribute('data-switch-state')
+      root.removeAttribute('data-committed-project')
     },
   }
 }

@@ -1,25 +1,32 @@
-export function createExperienceRuntime({
-  gsap,
-  ScrollTrigger,
-  createHeroTimeline,
-  createSectionTransitions,
-  createHeroProjectController,
-  reducedMotion,
-  desktopMotion,
-  scopeElement,
-  heroVisual,
-  heroProjects,
-}) {
+import { createCleanupQueue } from './createCleanupQueue'
+
+const runtimeCleanupProperties = ['--accent', '--accent-soft', '--scene-wash']
+
+export function createExperienceRuntime({ modules, motion, scopeElement, heroProjects }) {
+  const {
+    gsap,
+    ScrollTrigger,
+    createHeroTimeline,
+    createSectionTransitions,
+    createHeroProjectController,
+    createBackgroundSystem,
+  } = modules
+  const { reducedMotion, desktopMotion } = motion
+
   gsap.registerPlugin(ScrollTrigger)
 
   const root = document.documentElement
-  let animationContext = null
+  const cleanup = createCleanupQueue()
   const heroProjectController = createHeroProjectController({
     scopeElement,
     projects: heroProjects,
   })
+  const backgroundController = createBackgroundSystem({
+    scopeElement,
+    reducedMotion,
+  })
 
-  animationContext = gsap.context(() => {
+  const animationContext = gsap.context(() => {
     createHeroTimeline({
       gsap,
       reducedMotion,
@@ -29,15 +36,20 @@ export function createExperienceRuntime({
     createSectionTransitions({ gsap, reducedMotion })
   }, scopeElement)
 
+  cleanup.add(() => animationContext?.revert())
+  cleanup.add(() => heroProjectController?.destroy())
+  cleanup.add(() => backgroundController?.destroy())
+  cleanup.add(() => {
+    for (const property of runtimeCleanupProperties) {
+      root.style.removeProperty(property)
+    }
+  })
+
   ScrollTrigger.refresh()
 
   return {
     destroy() {
-      animationContext?.revert()
-      heroProjectController?.destroy()
-      root.style.removeProperty('--accent')
-      root.style.removeProperty('--accent-soft')
-      root.style.removeProperty('--scene-wash')
+      cleanup.destroy()
     },
   }
 }

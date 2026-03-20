@@ -5,7 +5,7 @@ import { bootstrapExperience } from './experience/bootstrapExperience'
 import { mountExperiencePage } from './experience/mountExperiencePage'
 import { shouldEnableDesktopMotion } from './experience/runtimeConfig'
 
-const { mobileHero, scopeElement, heroVisual } = mountExperiencePage({
+const { mobileHero, scopeElement } = mountExperiencePage({
   content: siteContent,
   renderPage,
 })
@@ -21,9 +21,10 @@ if (mobileHero) {
 }
 
 bootstrapExperience({
-  reducedMotion,
-  desktopMotion,
+  motion: {
+    reducedMotion,
+    desktopMotion,
+  },
   scopeElement,
-  heroVisual,
   heroProjects: siteContent.hero.projects,
 })
