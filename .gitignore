@@ -1,5 +1,7 @@
 node_modules
 dist
 .DS_Store
+.ccb/
 webgl-scroll-*.png
 founder-portfolio-*.png
+docs/verification/**/*.png
