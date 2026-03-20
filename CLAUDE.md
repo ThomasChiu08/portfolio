@@ -31,8 +31,8 @@ This is a **motion-first portfolio website** built with vanilla JS, GSAP animati
 
 - **experience/** — Runtime orchestration. The hero project switcher uses a **model/view split**: `heroProjectSwitcherModel.js` (state machine: idle → candidate → committed → transition) and `heroProjectSwitcherView.js` (DOM rendering)
 - **background/** — High-performance 2D canvas renderer with signal field visualization, section-aware state transitions, and pointer tracking. Entry: `createBackgroundSystem.js`
-- **animations/** — GSAP timelines and ScrollTrigger-driven section transitions. `heroTimeline.js`, `scrollTimeline.js`, `sectionTransitions.js`
-- **scene/** — Three.js 3D scene (currently unused but chunked separately in build)
+- **animations/** — GSAP timelines and ScrollTrigger-driven section transitions. `heroTimeline.js`, `sectionTransitions.js`
+- **scene/** — Removed. The legacy Three.js scene tree was deleted after it became fully disconnected from the active runtime.
 - **utils/device.js** — Device profiling with performance tiers (high/medium/low) that drive adaptive rendering decisions
 
 ### Patterns
@@ -54,4 +54,4 @@ Global CSS variables in `src/style.css`. Responsive breakpoints defined in `src/
 
 ## Build
 
-Vite with manual chunks splitting `three` and `gsap` into separate bundles (`vite.config.js`).
+Vite with a manual chunk for `gsap` (`vite.config.js`). The old Three.js scene tree has been removed and is no longer part of the build.
