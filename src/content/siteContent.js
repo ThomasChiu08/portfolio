@@ -139,9 +139,18 @@ const researchNotes = [
 ]
 
 const principles = [
-  'Build for signal, not activity.',
-  'Treat execution as a design problem.',
-  'Prefer systems that compound under pressure.',
+  {
+    text: 'Build for signal, not activity.',
+    sub: 'Most systems generate noise by default. The hard work is filtering.',
+  },
+  {
+    text: 'Treat execution as a design problem.',
+    sub: 'How a system runs is as important as what it runs. Friction compounds.',
+  },
+  {
+    text: 'Prefer systems that compound under pressure.',
+    sub: 'Robust structures get stronger at the edges, not weaker.',
+  },
 ]
 
 const links = [
