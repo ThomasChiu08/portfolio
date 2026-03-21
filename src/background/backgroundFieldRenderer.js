@@ -39,6 +39,10 @@ export function drawRoutes({ context, currentState, routeLayouts, time, reducedM
       return
     }
 
+    if (!route.screenSamples?.length) {
+      return
+    }
+
     context.beginPath()
     context.moveTo(route.screenSamples[0].x, route.screenSamples[0].y)
 

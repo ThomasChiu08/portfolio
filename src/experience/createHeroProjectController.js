@@ -263,7 +263,9 @@ export function createHeroProjectController({ scopeElement, projects = [] }) {
       return
     }
 
-    navigateToProject(getProject(activeIndex).slug)
+    const project = getProject(activeIndex)
+    if (!project) return
+    navigateToProject(project.slug)
   }
 
   function handleKeydown(event) {
@@ -304,7 +306,9 @@ export function createHeroProjectController({ scopeElement, projects = [] }) {
 
     if (openTarget && (event.key === 'Enter' || event.key === ' ')) {
       event.preventDefault()
-      navigateToProject(getProject(activeIndex).slug)
+      const project = getProject(activeIndex)
+      if (!project) return
+      navigateToProject(project.slug)
       return
     }
 

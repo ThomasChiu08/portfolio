@@ -69,7 +69,7 @@ export function createSectionStateController({
         window.cancelAnimationFrame(rafId)
       }
 
-      window.removeEventListener('scroll', schedule)
+      window.removeEventListener('scroll', schedule, { passive: true })
       window.removeEventListener('resize', schedule)
     },
   }

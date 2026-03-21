@@ -251,7 +251,7 @@ function renderLeadProject(item) {
       <p class="current-work-card__summary">${item.summary}</p>
       <p class="current-work-card__detail">${item.detail}</p>
       <dl class="current-work-card__facts">
-        ${item.facts
+        ${(item.facts ?? [])
           .map(
             (fact) => `
               <div class="current-work-card__fact">

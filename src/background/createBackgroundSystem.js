@@ -289,8 +289,10 @@ export function createBackgroundSystem({
       }
 
       sectionController?.destroy()
-      window.removeEventListener('pointermove', handlePointerMove)
-      window.removeEventListener('pointerleave', handlePointerLeave)
+      if (!reducedMotion) {
+        window.removeEventListener('pointermove', handlePointerMove)
+        window.removeEventListener('pointerleave', handlePointerLeave)
+      }
       window.removeEventListener('resize', handleResize)
       shell.style.removeProperty('--signal-accent-rgb')
       shell.style.removeProperty('--signal-secondary-rgb')
