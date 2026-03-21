@@ -106,6 +106,21 @@ html {
   background: #F5F5F7;
 }
 
+/* ScrollSmoother wrapper — GSAP transforms #smooth-content for smooth scroll */
+#smooth-wrapper {
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#smooth-content {
+  overflow: visible;
+  width: 100%;
+}
+
 body {
   margin: 0;
   min-width: 320px;
@@ -317,7 +332,6 @@ dd {
 .section-kicker,
 .section-label,
 .hero-proof__item,
-.hero-systems-card__label,
 .current-work-card__eyebrow,
 .current-work-card__stage,
 .current-work-card__fact-label,
@@ -696,161 +710,44 @@ dd {
   line-height: 1.65;
 }
 
-.hero-visual {
-  position: relative;
-  z-index: 2;
-  display: grid;
-  min-height: 520px;
-  padding-top: 96px;
-  align-items: end;
-}
-
-.hero-visual::before {
-  content: '';
-  position: absolute;
-  inset: 46px 2% 0 auto;
-  width: min(460px, 100%);
-  border-radius: var(--radius-lg);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.22), transparent 38%),
-    rgba(250, 246, 238, 0.26);
-  box-shadow: var(--shadow-soft);
-}
-
-.hero-visual__badge {
-  position: absolute;
-  top: 0;
-  left: 0;
-  display: inline-flex;
-  align-items: center;
-  min-height: 32px;
-  padding: 0 12px;
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.66);
-  color: var(--text-muted);
-  font-size: 0.68rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-}
-
-.hero-visual__hint {
-  position: absolute;
-  top: 46px;
-  left: 0;
-  color: var(--text-muted);
-  font-size: 0.82rem;
-  line-height: 1.6;
-}
-
-.hero-systems-card {
-  position: relative;
-  isolation: isolate;
-  justify-self: end;
-  width: min(480px, 100%);
-  padding: 20px 20px 18px;
-  border: 1px solid rgba(255, 255, 255, 0.42);
-  border-radius: 30px;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.25) 28%, rgba(245, 245, 247, 0.16) 100%),
-    rgba(245, 245, 247, 0.34);
-  backdrop-filter: blur(10px) saturate(125%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.5),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.18),
-    0 22px 60px rgba(0, 0, 0, 0.06);
-  overflow: hidden;
-}
-
-.hero-systems-card::before,
-.hero-systems-card::after {
-  content: '';
-  position: absolute;
-  pointer-events: none;
-}
-
-.hero-systems-card::before {
-  inset: 1px;
-  border-radius: inherit;
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.58), rgba(255, 255, 255, 0.08) 34%, rgba(255, 255, 255, 0.22) 100%);
-  opacity: 0.78;
-}
-
-.hero-systems-card::after {
-  top: 10px;
-  left: 18px;
-  right: 18px;
-  height: 76px;
-  border-radius: 999px;
-  background:
-    radial-gradient(circle at left center, rgba(255, 255, 255, 0.38), transparent 34%),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0) 44%, rgba(161, 161, 170, 0.1) 74%, rgba(255, 255, 255, 0.24));
-  opacity: 0.72;
-  filter: blur(10px);
-}
-
-.hero-systems-card__label {
-  position: relative;
-  z-index: 1;
-  color: var(--text-muted);
-  font-size: 0.66rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
+/* ── Hero Projects (right column) ── */
 
 /* ── Editorial Project Card ── */
 
 .hero-projects {
-  overflow: hidden;
+  position: relative;
+  z-index: 2;
+  align-self: center;
+  justify-self: end;
+  width: min(480px, 100%);
 }
 
 .hero-projects__switcher {
   position: relative;
-  z-index: 2;
 }
 
 .hero-projects__panel {
-  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  min-height: 360px;
-  padding: 36px 32px 28px;
-  border: 1px solid rgba(255, 255, 255, 0.45);
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.52);
-  backdrop-filter: blur(16px) saturate(120%);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.04);
-}
-
-.hero-projects__panel::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.3), transparent 40%);
-  opacity: 0.3;
+  gap: 16px;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .hero-projects__eyebrow {
-  position: relative;
-  z-index: 1;
   color: var(--text-muted);
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   letter-spacing: 0.06em;
-  opacity: 0.6;
+  opacity: 0.5;
 }
 
 .hero-projects__panel-body {
-  position: relative;
-  z-index: 1;
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  flex: 1;
+  gap: 12px;
   transition:
     opacity 300ms ease,
     transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
@@ -870,9 +767,9 @@ dd {
     'Baskerville',
     Georgia,
     serif;
-  font-size: clamp(3rem, 5.5vw, 4.5rem);
-  line-height: 0.94;
-  letter-spacing: -0.04em;
+  font-size: clamp(2.2rem, 4vw, 3rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
 }
 
 .hero-projects__panel-thesis {
@@ -883,8 +780,6 @@ dd {
 }
 
 .hero-projects__status {
-  position: relative;
-  z-index: 1;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -901,12 +796,10 @@ dd {
 }
 
 .hero-projects__dots {
-  position: relative;
-  z-index: 1;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 12px;
+  gap: 4px;
+  margin-top: 4px;
 }
 
 .hero-projects__dot-btn {
@@ -942,9 +835,7 @@ dd {
 }
 
 .hero-projects__open {
-  position: relative;
-  z-index: 1;
-  align-self: center;
+  align-self: flex-start;
   color: var(--accent);
   font-size: 0.8rem;
   letter-spacing: 0.02em;
@@ -1449,10 +1340,7 @@ dd {
   border-color: var(--line-strong);
 }
 
-.hero-systems-card,
-.hero-visual__badge,
 .js-hero-card,
-.js-hero-visual-badge,
 .js-hero-positioning,
 .js-masthead,
 .js-hero-kicker,
@@ -1512,12 +1400,8 @@ dd {
     padding-top: 156px;
   }
 
-  .hero-visual {
-    min-height: 580px;
-  }
-
-  .hero-systems-card {
-    width: min(500px, 100%);
+  .hero-projects {
+    width: min(520px, 100%);
   }
 
   .contact-title {
@@ -1587,26 +1471,9 @@ dd {
     max-width: none;
   }
 
-  .hero-visual {
-    min-height: 420px;
-    padding-top: 84px;
-  }
-
-  .hero-visual::before {
-    inset: 50px 0 0 0;
-    width: 100%;
-  }
-
-  .hero-systems-card {
+  .hero-projects {
     width: 100%;
     justify-self: stretch;
-    padding: 18px 16px 16px;
-    border-radius: 26px;
-  }
-
-  .hero-projects__panel {
-    min-height: 0;
-    padding: 24px 20px 20px;
   }
 
   .hero-actions,
@@ -1855,8 +1722,7 @@ dd {
 }
 
 :root[data-theme='dark'] .current-work-card,
-:root[data-theme='dark'] .research-notes,
-:root[data-theme='dark'] .hero-projects__panel {
+:root[data-theme='dark'] .research-notes {
   border-color: rgba(255, 255, 255, 0.08);
   background: rgba(10, 10, 10, 0.72);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);

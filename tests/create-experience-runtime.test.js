@@ -33,9 +33,21 @@ describe('createExperienceRuntime', () => {
     const createSplitTextReveal = vi.fn(() => splitTextReveal)
     const heroShaderLayer = { destroy: vi.fn(), setTheme: vi.fn(), refresh: vi.fn() }
     const createHeroShaderLayer = vi.fn(() => heroShaderLayer)
+    const ScrollSmoother = { create: vi.fn(() => ({ kill: vi.fn() })) }
+    const Flip = { getState: vi.fn(), from: vi.fn() }
+    const Observer = { create: vi.fn(() => ({ kill: vi.fn() })) }
+    const CustomEase = { create: vi.fn() }
+    const SplitText = { version: 'mock' }
+    const createHeroProjectFlip = vi.fn(() => null)
+    const registerBrandEasing = vi.fn()
     const modules = {
       gsap: { registerPlugin, context },
       ScrollTrigger: { refresh },
+      ScrollSmoother,
+      Flip,
+      Observer,
+      CustomEase,
+      SplitText,
       createHeroTimeline,
       createSectionTransitions,
       createHeroProjectController,
@@ -43,6 +55,8 @@ describe('createExperienceRuntime', () => {
       createThemeController,
       createSplitTextReveal,
       createHeroShaderLayer,
+      createHeroProjectFlip,
+      registerBrandEasing,
     }
 
     const runtime = createExperienceRuntime({

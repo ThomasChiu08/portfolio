@@ -18,7 +18,7 @@ function prefersCoarsePointer() {
   return window.matchMedia?.('(pointer: coarse)')?.matches ?? false
 }
 
-export function createHeroProjectController({ scopeElement, projects = [] }) {
+export function createHeroProjectController({ scopeElement, projects = [], Observer = null, flipAdapter = null }) {
   const root = scopeElement?.querySelector('.js-hero-projects')
 
   if (!root || projects.length === 0) {
@@ -54,17 +54,25 @@ export function createHeroProjectController({ scopeElement, projects = [] }) {
   }
 
   function updateView() {
-    syncHeroProjectSwitcherView({
-      root,
-      elements,
-      activeProject: getProject(activeIndex),
-      committedProject: getProject(committedIndex),
-      activeIndex,
-      committedIndex,
-      projectIndex: model.projectIndex,
-      switchState,
-      touchMode,
-    })
+    const applySync = () => {
+      syncHeroProjectSwitcherView({
+        root,
+        elements,
+        activeProject: getProject(activeIndex),
+        committedProject: getProject(committedIndex),
+        activeIndex,
+        committedIndex,
+        projectIndex: model.projectIndex,
+        switchState,
+        touchMode,
+      })
+    }
+
+    if (flipAdapter && switchState === HERO_PROJECT_SWITCH_STATES.committed) {
+      flipAdapter.animatePanelSwap(elements.panel, applySync)
+    } else {
+      applySync()
+    }
   }
 
   function setSwitchState(nextState) {
@@ -298,10 +306,38 @@ export function createHeroProjectController({ scopeElement, projects = [] }) {
   root.addEventListener('click', handleClick)
   root.addEventListener('keydown', handleKeydown)
 
+  // Swipe gesture support via Observer plugin
+  let swipeObserver = null
+  if (Observer && touchMode) {
+    swipeObserver = Observer.create({
+      target: root,
+      type: 'touch',
+      dragMinimum: 30,
+      tolerance: 50,
+      lockAxis: true,
+      preventDefault: false,
+      onLeft() {
+        if (switchState === HERO_PROJECT_SWITCH_STATES.transition) return
+        const nextIndex = clampIndex(activeIndex + 1, projects.length)
+        const nextProject = getProject(nextIndex)
+        previewProject(nextProject.slug)
+        commitActiveProject()
+      },
+      onRight() {
+        if (switchState === HERO_PROJECT_SWITCH_STATES.transition) return
+        const nextIndex = clampIndex(activeIndex - 1, projects.length)
+        const nextProject = getProject(nextIndex)
+        previewProject(nextProject.slug)
+        commitActiveProject()
+      },
+    })
+  }
+
   updateView()
 
   return {
     destroy() {
+      swipeObserver?.kill()
       clearTransitionResetTimeout()
 
       if (spotlightTimeout) {

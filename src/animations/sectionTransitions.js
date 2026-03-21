@@ -13,7 +13,7 @@ export function createSectionTransitions({ gsap, reducedMotion }) {
         y: 0,
         opacity: 1,
         duration: reducedMotion ? 0.55 : 0.9,
-        ease: 'power2.out',
+        ease: 'brand.decel',
         scrollTrigger: {
           trigger: element,
           start: 'top 84%',

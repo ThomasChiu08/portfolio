@@ -8,7 +8,7 @@ export function createHeroTimeline({ gsap, reducedMotion, desktopMotion }) {
 
   const timeline = gsap.timeline({
     defaults: {
-      ease: 'power3.out',
+      ease: 'brand.decel',
     },
   })
 
@@ -116,47 +116,6 @@ export function createHeroTimeline({ gsap, reducedMotion, desktopMotion }) {
         duration: motion.micro.duration,
       },
       motion.micro.at,
-    )
-    .fromTo(
-      '.js-hero-visual',
-      {
-        y: motion.visual.fromY,
-        opacity: 0,
-        scale: motion.visual.scale,
-      },
-      {
-        y: 0,
-        opacity: 1,
-        scale: 1,
-        duration: motion.visual.duration,
-      },
-      motion.visual.at,
-    )
-    .fromTo(
-      '.js-hero-visual-badge',
-      {
-        y: motion.badge.fromY,
-        opacity: 0,
-      },
-      {
-        y: 0,
-        opacity: 1,
-        duration: motion.badge.duration,
-      },
-      motion.badge.at,
-    )
-    .fromTo(
-      '.js-hero-visual-hint',
-      {
-        y: motion.hint.fromY,
-        opacity: 0,
-      },
-      {
-        y: 0,
-        opacity: 1,
-        duration: motion.hint.duration,
-      },
-      motion.hint.at,
     )
     .fromTo(
       '.js-hero-card',

@@ -54,6 +54,8 @@ export function renderPage(content = siteContent) {
         </div>
       </header>
 
+      <div id="smooth-wrapper">
+      <div id="smooth-content">
       <main class="page">
         <section id="hero" class="section section--hero">
           <div class="container hero-grid">
@@ -86,20 +88,16 @@ export function renderPage(content = siteContent) {
               <p class="hero-micro js-hero-micro">${content.hero.micro}</p>
             </div>
 
-            <div class="hero-visual js-hero-visual">
-              <div class="hero-visual__badge js-hero-visual-badge">${content.hero.visualBadge}</div>
-              <p class="hero-visual__hint js-hero-visual-hint">${content.hero.visualHint}</p>
-              <aside
-                class="hero-systems-card hero-projects js-hero-card js-hero-projects"
-                aria-label="${content.hero.projectsLabel}"
-                data-active-project="${activeHeroProject.slug}"
-                data-switch-state="idle"
-              >
-                <div id="hero-project-surface" class="hero-projects__switcher">
-                  ${renderHeroProjectPanel(activeHeroProject, content.hero.projects)}
-                </div>
-              </aside>
-            </div>
+            <aside
+              class="hero-projects js-hero-card js-hero-projects js-hero-visual"
+              aria-label="${content.hero.projectsLabel}"
+              data-active-project="${activeHeroProject.slug}"
+              data-switch-state="idle"
+            >
+              <div id="hero-project-surface" class="hero-projects__switcher">
+                ${renderHeroProjectPanel(activeHeroProject, content.hero.projects)}
+              </div>
+            </aside>
           </div>
         </section>
 
@@ -198,6 +196,8 @@ export function renderPage(content = siteContent) {
           </div>
         </section>
       </main>
+      </div>
+      </div>
     </div>
   `
 }

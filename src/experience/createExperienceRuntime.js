@@ -6,6 +6,11 @@ export function createExperienceRuntime({ modules, motion, scopeElement, heroPro
   const {
     gsap,
     ScrollTrigger,
+    ScrollSmoother,
+    Flip,
+    Observer,
+    CustomEase,
+    SplitText,
     createHeroTimeline,
     createSectionTransitions,
     createHeroProjectController,
@@ -13,22 +18,47 @@ export function createExperienceRuntime({ modules, motion, scopeElement, heroPro
     createThemeController,
     createSplitTextReveal,
     createHeroShaderLayer,
+    createHeroProjectFlip,
+    registerBrandEasing,
   } = modules
   const { reducedMotion, desktopMotion } = motion
 
-  gsap.registerPlugin(ScrollTrigger)
+  // Register all plugins in dependency order (ScrollTrigger before ScrollSmoother)
+  gsap.registerPlugin(ScrollTrigger, ScrollSmoother, Flip, Observer, CustomEase, SplitText)
+
+  // Brand easing curves — available site-wide as ease: 'brand.smooth' etc.
+  registerBrandEasing(CustomEase)
 
   const root = document.documentElement
   const cleanup = createCleanupQueue()
 
   // Register in intended teardown order (queue runs FIFO):
-  // 1. stop animations, 2. destroy controllers, 3. clean CSS props
+  // 1. stop animations, 2. destroy controllers, 3. clean CSS props, 4. kill smoother last
   let animationContext = null
   cleanup.add(() => animationContext?.revert())
+
+  // ScrollSmoother — must be created BEFORE any ScrollTrigger instances
+  let smoother = null
+  const smoothWrapper = document.querySelector('#smooth-wrapper')
+  const smoothContent = document.querySelector('#smooth-content')
+  if (smoothWrapper && smoothContent) {
+    smoother = ScrollSmoother.create({
+      wrapper: smoothWrapper,
+      content: smoothContent,
+      smooth: reducedMotion ? 0 : 1.2,
+      effects: !reducedMotion,
+      normalizeScroll: false,
+    })
+  }
+
+  // Flip adapter for hero project switcher
+  const flipAdapter = createHeroProjectFlip({ Flip, gsap, reducedMotion })
 
   const heroProjectController = createHeroProjectController({
     scopeElement,
     projects: heroProjects,
+    Observer: reducedMotion ? null : Observer,
+    flipAdapter,
   })
   cleanup.add(() => heroProjectController?.destroy())
 
@@ -75,6 +105,9 @@ export function createExperienceRuntime({ modules, motion, scopeElement, heroPro
     // SplitText runs outside GSAP context — owns its own ScrollTriggers
     const splitTextReveal = createSplitTextReveal({ gsap, scopeElement, reducedMotion })
     cleanup.add(() => splitTextReveal?.destroy())
+
+    // ScrollSmoother cleanup LAST — after all ScrollTriggers are reverted
+    cleanup.add(() => smoother?.kill())
 
     runtimeReady = true
   } finally {

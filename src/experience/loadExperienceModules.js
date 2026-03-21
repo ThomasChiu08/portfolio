@@ -2,6 +2,11 @@ export async function loadExperienceModules() {
   const [
     { default: gsap },
     { ScrollTrigger },
+    { ScrollSmoother },
+    { Flip },
+    { Observer },
+    { CustomEase },
+    { SplitText },
     { createHeroTimeline },
     { createSectionTransitions },
     { createHeroProjectController },
@@ -9,9 +14,16 @@ export async function loadExperienceModules() {
     { createThemeController },
     { createSplitTextReveal },
     { createHeroShaderLayer },
+    { createHeroProjectFlip },
+    { registerBrandEasing },
   ] = await Promise.all([
     import('gsap'),
     import('gsap/ScrollTrigger'),
+    import('gsap/ScrollSmoother'),
+    import('gsap/Flip'),
+    import('gsap/Observer'),
+    import('gsap/CustomEase'),
+    import('gsap/SplitText'),
     import('../animations/heroTimeline'),
     import('../animations/sectionTransitions'),
     import('./createHeroProjectController'),
@@ -19,11 +31,18 @@ export async function loadExperienceModules() {
     import('./createThemeController'),
     import('../animations/splitTextReveal'),
     import('../webgl/createHeroShaderLayer'),
+    import('../animations/heroProjectFlip'),
+    import('../animations/brandEasing'),
   ])
 
   return {
     gsap,
     ScrollTrigger,
+    ScrollSmoother,
+    Flip,
+    Observer,
+    CustomEase,
+    SplitText,
     createHeroTimeline,
     createSectionTransitions,
     createHeroProjectController,
@@ -31,5 +50,7 @@ export async function loadExperienceModules() {
     createThemeController,
     createSplitTextReveal,
     createHeroShaderLayer,
+    createHeroProjectFlip,
+    registerBrandEasing,
   }
 }
