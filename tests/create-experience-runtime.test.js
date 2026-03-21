@@ -25,8 +25,12 @@ describe('createExperienceRuntime', () => {
     const createSectionTransitions = vi.fn()
     const heroProjectController = { destroy: vi.fn() }
     const createHeroProjectController = vi.fn(() => heroProjectController)
-    const backgroundController = { destroy: vi.fn() }
+    const backgroundController = { destroy: vi.fn(), setTheme: vi.fn() }
     const createBackgroundSystem = vi.fn(() => backgroundController)
+    const themeController = { destroy: vi.fn(), toggle: vi.fn(), getCurrentTheme: vi.fn() }
+    const createThemeController = vi.fn(() => themeController)
+    const splitTextReveal = { destroy: vi.fn() }
+    const createSplitTextReveal = vi.fn(() => splitTextReveal)
     const modules = {
       gsap: { registerPlugin, context },
       ScrollTrigger: { refresh },
@@ -34,6 +38,8 @@ describe('createExperienceRuntime', () => {
       createSectionTransitions,
       createHeroProjectController,
       createBackgroundSystem,
+      createThemeController,
+      createSplitTextReveal,
     }
 
     const runtime = createExperienceRuntime({

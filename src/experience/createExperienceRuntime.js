@@ -10,6 +10,8 @@ export function createExperienceRuntime({ modules, motion, scopeElement, heroPro
     createSectionTransitions,
     createHeroProjectController,
     createBackgroundSystem,
+    createThemeController,
+    createSplitTextReveal,
   } = modules
   const { reducedMotion, desktopMotion } = motion
 
@@ -35,6 +37,9 @@ export function createExperienceRuntime({ modules, motion, scopeElement, heroPro
   })
   cleanup.add(() => backgroundController?.destroy())
 
+  const themeController = createThemeController({ backgroundSystem: backgroundController })
+  cleanup.add(() => themeController?.destroy())
+
   cleanup.add(() => {
     for (const property of runtimeCleanupProperties) {
       root.style.removeProperty(property)
@@ -54,6 +59,11 @@ export function createExperienceRuntime({ modules, motion, scopeElement, heroPro
     }, scopeElement)
 
     ScrollTrigger.refresh()
+
+    // SplitText runs outside GSAP context — owns its own ScrollTriggers
+    const splitTextReveal = createSplitTextReveal({ gsap, scopeElement, reducedMotion })
+    cleanup.add(() => splitTextReveal?.destroy())
+
     runtimeReady = true
   } finally {
     if (!runtimeReady) {

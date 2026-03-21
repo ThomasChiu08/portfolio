@@ -6,6 +6,8 @@ export async function loadExperienceModules() {
     { createSectionTransitions },
     { createHeroProjectController },
     { createBackgroundSystem },
+    { createThemeController },
+    { createSplitTextReveal },
   ] = await Promise.all([
     import('gsap'),
     import('gsap/ScrollTrigger'),
@@ -13,6 +15,8 @@ export async function loadExperienceModules() {
     import('../animations/sectionTransitions'),
     import('./createHeroProjectController'),
     import('../background/createBackgroundSystem'),
+    import('./createThemeController'),
+    import('../animations/splitTextReveal'),
   ])
 
   return {
@@ -22,5 +26,7 @@ export async function loadExperienceModules() {
     createSectionTransitions,
     createHeroProjectController,
     createBackgroundSystem,
+    createThemeController,
+    createSplitTextReveal,
   }
 }

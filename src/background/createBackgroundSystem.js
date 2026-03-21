@@ -46,6 +46,7 @@ export function createBackgroundSystem({
   let destroyed = false
   let lastFrame = 0
   let activeSectionId = 'hero'
+  let isDarkTheme = false
 
   const targetState = getBackgroundState('hero')
   const currentState = getBackgroundState('hero')
@@ -81,11 +82,13 @@ export function createBackgroundSystem({
     const secondaryDriftX = Math.cos(time * 0.032 + 0.4) * 14
     const secondaryDriftY = Math.sin(time * 0.028 + 0.8) * 9
 
-    shell.style.setProperty('--signal-accent-rgb', currentState.accent.map(Math.round).join(', '))
-    shell.style.setProperty(
-      '--signal-secondary-rgb',
-      currentState.secondary.map(Math.round).join(', '),
-    )
+    const displayAccent = isDarkTheme
+      ? currentState.accent.map((v) => Math.min(255, Math.round(v + 32)))
+      : currentState.accent.map(Math.round)
+    const displaySecondary = isDarkTheme ? [28, 26, 24] : currentState.secondary.map(Math.round)
+
+    shell.style.setProperty('--signal-accent-rgb', displayAccent.join(', '))
+    shell.style.setProperty('--signal-secondary-rgb', displaySecondary.join(', '))
     grid.style.opacity = currentState.gridOpacity.toFixed(3)
     vignette.style.opacity = currentState.vignetteOpacity.toFixed(3)
     atmospherePrimary.style.opacity = currentState.primaryAtmosphereOpacity.toFixed(3)
@@ -127,13 +130,22 @@ export function createBackgroundSystem({
     context.clearRect(0, 0, canvas.width, canvas.height)
     context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0)
 
+    // In dark mode, boost accent luminance so canvas elements glow against dark bg
+    const drawState = isDarkTheme
+      ? {
+          ...currentState,
+          accent: currentState.accent.map((v) => Math.min(255, v + 32)),
+          secondary: [28, 26, 24],
+        }
+      : currentState
+
     const viewportWidth = window.innerWidth
     const viewportHeight = window.innerHeight
     const routeLayouts = createRouteLayouts({
       routes: model.routes,
       width: viewportWidth,
       height: viewportHeight,
-      currentState,
+      currentState: drawState,
       pointer,
       activeSectionId,
       time,
@@ -151,7 +163,7 @@ export function createBackgroundSystem({
     drawDust({
       context,
       model,
-      currentState,
+      currentState: drawState,
       pointer,
       width: viewportWidth,
       height: viewportHeight,
@@ -159,19 +171,19 @@ export function createBackgroundSystem({
     })
     drawRoutes({
       context,
-      currentState,
+      currentState: drawState,
       routeLayouts,
       time,
       reducedMotion,
     })
     drawRelayLinks({
       context,
-      currentState,
+      currentState: drawState,
       links: relayLayouts.links,
     })
     drawRelayNodes({
       context,
-      currentState,
+      currentState: drawState,
       nodes: relayLayouts.nodes,
     })
   }
@@ -281,6 +293,14 @@ export function createBackgroundSystem({
   }
 
   return {
+    setTheme(theme) {
+      isDarkTheme = theme === 'dark'
+      // Immediately flush themed colors — critical in reduced-motion/static mode
+      // where the RAF loop may not redraw soon enough
+      const time = lastFrame / 1000 || 0
+      applyShellStyles(time)
+      render(time)
+    },
     destroy() {
       destroyed = true
 

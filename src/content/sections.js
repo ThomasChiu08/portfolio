@@ -436,6 +436,15 @@ export function renderPage(content = siteContent) {
               ariaLabel: 'Back to top',
             })}
             ${renderNav(content.nav)}
+            <button
+              type="button"
+              class="theme-toggle"
+              data-theme-toggle
+              aria-label="Switch to dark mode"
+              aria-pressed="false"
+            >
+              <span class="theme-toggle__icon" aria-hidden="true"></span>
+            </button>
           </nav>
         </div>
       </header>
@@ -445,7 +454,7 @@ export function renderPage(content = siteContent) {
           <div class="container hero-grid">
             <div class="hero-copy">
               <p class="section-kicker js-hero-kicker">${content.hero.eyebrow}</p>
-              <h1 class="hero-title js-hero-title">${content.hero.headline}</h1>
+              <h1 class="hero-title js-hero-title js-split-title">${content.hero.headline}</h1>
               <p class="hero-positioning js-hero-positioning">${content.hero.positioning}</p>
               <p class="hero-support js-hero-body">${content.hero.subtext}</p>
               <div class="hero-proof js-hero-proof">
@@ -535,7 +544,7 @@ export function renderPage(content = siteContent) {
           <div class="container">
             <div class="section-heading js-section-reveal">
               <p class="section-label">${content.about.label}</p>
-              <h2 class="section-title">${content.about.title}</h2>
+              <h2 class="section-title js-split-title">${content.about.title}</h2>
               <p class="section-intro">${content.about.intro}</p>
             </div>
             <div class="principles-list">
@@ -548,8 +557,22 @@ export function renderPage(content = siteContent) {
           <div class="container">
             <div class="contact-panel js-section-reveal">
               <p class="section-label">${content.contact.label}</p>
-              <h2 class="contact-title">${content.contact.title}</h2>
+              <h2 class="contact-title js-split-title">${content.contact.title}</h2>
               <p class="contact-copy">${content.contact.body}</p>
+              <div class="contact-cli" role="group" aria-label="Send a message">
+                <span class="contact-cli__prompt" aria-hidden="true">~/portfolio &gt;</span>
+                <input
+                  type="text"
+                  class="contact-cli__input"
+                  placeholder="Open a channel…"
+                  aria-label="Message"
+                  spellcheck="false"
+                  autocomplete="off"
+                />
+                <button type="button" class="contact-cli__execute" aria-label="Send message">
+                  <span aria-hidden="true">↵</span>
+                </button>
+              </div>
               <div class="contact-links">
                 ${renderLinks(content.links)}
               </div>

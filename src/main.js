@@ -4,11 +4,15 @@ import { prefersReducedMotion } from './utils/device'
 import { bootstrapExperience } from './experience/bootstrapExperience'
 import { mountExperiencePage } from './experience/mountExperiencePage'
 import { shouldEnableDesktopMotion } from './experience/runtimeConfig'
+import { createContactCli } from './experience/createContactCli'
 
 const { mobileHero, scopeElement } = mountExperiencePage({
   content: siteContent,
   renderPage,
 })
+
+const emailLink = siteContent.links?.find((l) => l.href?.startsWith('mailto:'))
+createContactCli({ scopeElement, email: emailLink?.href?.replace('mailto:', '') })
 
 const reducedMotion = prefersReducedMotion()
 const desktopMotion = shouldEnableDesktopMotion({
