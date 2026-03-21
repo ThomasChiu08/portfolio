@@ -41,6 +41,14 @@ describe('lerp', () => {
   it('interpolates between negative and positive', () => {
     expect(lerp(-50, 50, 0.5)).toBe(0)
   })
+
+  it('extrapolates below 0 (unclamped)', () => {
+    expect(lerp(0, 100, -0.5)).toBe(-50)
+  })
+
+  it('extrapolates above 1 (unclamped)', () => {
+    expect(lerp(0, 100, 1.5)).toBe(150)
+  })
 })
 
 describe('mapRange', () => {
@@ -66,5 +74,22 @@ describe('mapRange', () => {
 
   it('maps to a different output range', () => {
     expect(mapRange(50, 0, 100, 200, 400)).toBe(300)
+  })
+
+  it('maps correctly with reversed output range', () => {
+    expect(mapRange(25, 0, 100, 100, 0)).toBe(75)
+  })
+
+  it('maps correctly with reversed input range', () => {
+    expect(mapRange(75, 100, 0, 0, 100)).toBe(25)
+  })
+
+  it('returns outMin when inMin === inMax (division by zero yields NaN → clamp to 0)', () => {
+    // When inMin === inMax, progress is NaN; clamp(NaN) is NaN, lerp with NaN returns NaN
+    expect(mapRange(5, 5, 5, 0, 100)).toBeNaN()
+  })
+
+  it('handles decimal values', () => {
+    expect(mapRange(1, 0, 3, 0, 1)).toBeCloseTo(0.333, 3)
   })
 })

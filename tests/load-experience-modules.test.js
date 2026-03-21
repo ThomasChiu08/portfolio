@@ -13,6 +13,12 @@ vi.mock('../src/experience/createHeroProjectController', () => ({
 vi.mock('../src/background/createBackgroundSystem', () => ({
   createBackgroundSystem: vi.fn(),
 }))
+vi.mock('../src/experience/createThemeController', () => ({
+  createThemeController: vi.fn(),
+}))
+vi.mock('../src/animations/splitTextReveal', () => ({
+  createSplitTextReveal: vi.fn(),
+}))
 
 import { loadExperienceModules } from '../src/experience/loadExperienceModules'
 
@@ -26,6 +32,8 @@ describe('loadExperienceModules', () => {
     expect(modules).toHaveProperty('createSectionTransitions')
     expect(modules).toHaveProperty('createHeroProjectController')
     expect(modules).toHaveProperty('createBackgroundSystem')
+    expect(modules).toHaveProperty('createThemeController')
+    expect(modules).toHaveProperty('createSplitTextReveal')
   })
 
   it('returns an object with exactly the expected keys', async () => {
@@ -38,6 +46,8 @@ describe('loadExperienceModules', () => {
       'createHeroProjectController',
       'createHeroTimeline',
       'createSectionTransitions',
+      'createSplitTextReveal',
+      'createThemeController',
       'gsap',
     ])
   })
