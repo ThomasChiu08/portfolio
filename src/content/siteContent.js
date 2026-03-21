@@ -1,22 +1,67 @@
 const nav = [
-  { label: 'Work', href: '#projects' },
+  { label: 'agentOS', href: '#agentos' },
   { label: 'Research', href: '#research' },
   { label: 'About', href: '#about' },
   { label: 'Contact', href: '#contact' },
 ]
 
+const buildLog = [
+  {
+    version: 'v0.3',
+    date: 'Mar 2026',
+    note: 'Multi-agent coordination protocol',
+    status: 'active',
+  },
+  {
+    version: 'v0.2',
+    date: 'Feb 2026',
+    note: 'Memory persistence layer, delegation primitives',
+    status: 'shipped',
+  },
+  {
+    version: 'v0.1',
+    date: 'Jan 2026',
+    note: 'Memory substrate and shared state API',
+    status: 'shipped',
+  },
+]
+
+const agentOSVCAnswers = {
+  problem: {
+    label: 'The problem',
+    body: 'Agent workflows collapse as they scale. Memory is stateless. Delegation is opaque. Coordination fails across steps, tools, and agents. Every serious team building with agents hits the same wall.',
+  },
+  who: {
+    label: 'Who has this problem',
+    body: 'Any team running multi-step, multi-agent workflows in production. Research labs, AI-native startups, and engineering teams replacing brittle prompt chains with durable systems.',
+  },
+  what: {
+    label: 'What agentOS is',
+    body: 'Infrastructure for durable agent execution. Memory that persists across sessions. Delegation that is auditable. Operator control that holds as workflows become more complex.',
+  },
+  built: {
+    label: 'What has been built',
+    body: 'v0.2 shipped: memory persistence layer, delegation primitives, shared state API. Early access open to builders. GitHub repository is public.',
+    cta: { label: 'View on GitHub', href: 'https://github.com/ThomasChiu08', external: true },
+  },
+  next: {
+    label: 'What is next',
+    body: 'v0.3 — multi-agent coordination protocol. The goal is to make coordinated agent work as reliable as a well-structured database transaction.',
+  },
+}
+
 const projectRecords = [
   {
     slug: 'agentos',
-    eyebrow: 'Primary current build',
-    label: 'Primary research memo',
+    eyebrow: 'Primary startup bet',
+    label: 'agentOS memo',
     name: 'agentOS',
     stage: 'Active build',
-    thesis: 'An operating system for agent memory, delegation, and execution.',
-    deckPreview: 'Research-backed infrastructure for durable multi-agent workflows.',
-    summary: 'An operating system for agent memory, delegation, and execution.',
+    thesis: 'Reliability infrastructure for agent memory, delegation, and execution.',
+    deckPreview: 'The substrate for durable multi-agent workflows.',
+    summary: 'Reliability infrastructure for agent memory, delegation, and execution.',
     detail:
-      'The ambition is to make complex research and build workflows durable as they become multi-step and multi-agent. My interest here is not automation theater. It is operational integrity.',
+      'Most agent frameworks treat memory as an afterthought. agentOS is built from the view that coordinated agent work requires a substrate — not a workaround.',
     description:
       'agentOS is built from the view that agent workflows should not collapse into brittle prompt chains as they become multi-step, multi-tool, and multi-agent. The system is designed to preserve memory, expose delegation logic, and keep operator control intact.',
     focus: 'Memory, delegation, state continuity, and observability.',
@@ -29,33 +74,34 @@ const projectRecords = [
     facts: [
       {
         label: 'Thesis',
-        value: 'Research-backed infrastructure for coordinated agent work.',
+        value: 'Reliability infrastructure for coordinated agent work.',
       },
       {
         label: 'Current focus',
-        value: 'Memory, delegation, operator control, and durable shared state.',
+        value: 'Memory persistence, delegation primitives, and durable shared state.',
       },
       {
         label: 'Edge',
-        value: 'Agent workflows should compound as work becomes more complex, not decay.',
+        value: 'Built from first principles. The research predates the product.',
       },
     ],
     links: {
       viewProject: '#agentos',
+      github: 'https://github.com/ThomasChiu08',
       readResearch: '#research',
     },
   },
   {
     slug: 'focusbox',
-    eyebrow: 'Supporting work',
-    label: 'Attention memo',
+    eyebrow: 'Field validation',
+    label: 'Attention systems memo',
     name: 'FocusBox',
     stage: 'Product design',
-    thesis: 'A structured environment for deep work, ritual, and measured attention.',
+    thesis: 'Attention is the first system I designed. Focus architecture as research.',
     deckPreview: 'A focus system built around ritual, environment, and feedback loops.',
     summary: 'A structured environment for deep work, ritual, and measured attention.',
     detail:
-      'It treats focus as infrastructure by linking environment design, behavioral cues, and feedback loops.',
+      'The same thesis that drives agentOS — that execution quality is structural — applied to human attention. Environment before willpower. Ritual creates repeatability.',
     description:
       'FocusBox explores the idea that builders do their best work when attention is designed with the same rigor as software. It combines ritual design, environmental cues, and measurable feedback to make deep work more repeatable.',
     focus: 'Deliberate sessions, behavioral cues, and recovery-aware feedback loops.',
@@ -72,17 +118,16 @@ const projectRecords = [
   },
   {
     slug: 'trading-research-system',
-    eyebrow: 'Supporting work',
+    eyebrow: 'Field validation',
     label: 'Market systems memo',
     name: 'Quant Research Platform',
     stage: 'Internal system',
-    thesis:
-      'A research system for signal mapping, scenario design, and execution under uncertainty.',
+    thesis: 'Execution under uncertainty. The same problem in a different domain.',
     deckPreview: 'A structured surface for conviction, scenarios, and disciplined execution.',
     summary:
       'A research system for signal mapping, scenario design, and execution under uncertainty.',
     detail:
-      'The goal is to connect macro framing, quantitative models, and execution discipline inside one research surface.',
+      'The question is how structure improves decisions under pressure. The same question agentOS asks about agent workflows — applied to market execution.',
     description:
       'This platform is a working environment for turning fragmented market information into structured conviction. It links macro framing, model libraries, and execution scenarios so the research process remains coherent under pressure.',
     focus: 'Macro framing, systematic models, and disciplined execution scenarios.',
@@ -104,37 +149,40 @@ const researchDirections = [
     eyebrow: 'Domain',
     title: 'Markets',
     body:
-      'I care about how signal is distorted by noise, pressure, and narrative drift. The research question is how better structure improves real decisions.',
+      'How signal is distorted by noise, pressure, and narrative drift. The research question is how better structure improves real decisions under uncertainty — the foundation for the Quant Platform.',
   },
   {
     eyebrow: 'Domain',
     title: 'Systems',
     body:
-      'I am interested in infrastructure that remains coherent as tasks become layered, multi-step, and interdependent. The question is how execution holds together.',
+      'Infrastructure that remains coherent as tasks become layered, multi-step, and interdependent. The question of how execution holds together — the foundation for agentOS.',
   },
   {
     eyebrow: 'Domain',
     title: 'AI agents',
     body:
-      'The deeper question is not whether agents can act, but whether they can preserve context, memory, and control while working alongside humans.',
+      'Not whether agents can act, but whether they can preserve context, memory, and control while working alongside humans. The open problem agentOS is built to solve.',
   },
 ]
 
 const researchNotes = [
   {
     title: 'Agent memory is a systems problem',
+    date: 'Jan 2026',
     body:
-      'Without continuity and retrieval, long-running workflows degrade into brittle prompts and manual patchwork.',
+      'Without continuity and retrieval, long-running workflows degrade into brittle prompts and manual patchwork. This is why agentOS starts with the memory substrate, not the interface.',
   },
   {
     title: 'Execution quality is structural',
+    date: 'Feb 2026',
     body:
-      'Teams and agents both fail when coordination logic is implicit. The interface has to carry structure, not just intent.',
+      'Teams and agents both fail when coordination logic is implicit. The interface has to carry structure, not just intent. Observability is not optional.',
   },
   {
     title: 'Research should shape the build',
+    date: 'Mar 2026',
     body:
-      'The right product architecture is often visible only after the underlying questions have been made explicit.',
+      'The right product architecture is often visible only after the underlying questions have been made explicit. agentOS is built from the research up, not from the API down.',
   },
 ]
 
@@ -164,37 +212,45 @@ const defaultHeroProject = heroProjects[0]
 
 export const siteContent = {
   meta: {
-    title: 'Thomas Chiu | Founder-builder across markets, systems, and AI agents',
+    title: 'Thomas Chiu | Building agentOS — reliability infrastructure for agentic execution',
     description:
-      'Thomas Chiu is a founder-builder, investor, and trader building agentOS, quantitative research infrastructure, and execution systems across markets, software, and AI agents.',
+      'Thomas Chiu is the founder of agentOS, infrastructure for durable agent memory, delegation, and execution. Research-led. Active build.',
   },
   hero: {
     name: 'Thomas Chiu',
-    eyebrow: 'Thomas Chiu / Founder-builder, investor, trader',
-    headline: 'I build systems for judgment, execution, and long-horizon leverage.',
+    eyebrow: 'Thomas Chiu / Founder — agentOS',
+    headline: 'Agent workflows break under complexity. I\'m building the reliability layer.',
     positioning:
-      'Across markets, software, and AI agents, my work turns research into operational systems.',
+      'agentOS is infrastructure for durable agent execution — memory, delegation, and operator control that holds as workflows become multi-step and multi-agent.',
     subtext:
-      'agentOS is the clearest expression of that thesis, but the larger pattern is consistent: research first, then infrastructure, then execution.',
-    proof: ['Founder-builder', 'Research-led', 'Markets + AI agents'],
-    primaryCta: 'Current Work',
+      'Built from first principles, not from wrapping existing APIs. The research predates the product.',
+    proof: ['Founder', 'agentOS — Active build', 'Research-led'],
+    primaryCta: 'See agentOS',
     secondaryCta: 'Research Lens',
     micro:
-      'Founder-builder first. Investor and trader by discipline. Research depth as the edge.',
-    visualBadge: 'Project memo deck',
+      'Investor and trader by discipline. Research depth as the edge.',
+    visualBadge: 'Project deck',
     visualHint: 'Preview a project memo, then open the section.',
     projectsLabel: 'Project deck',
     activeProject: defaultHeroProject.slug,
     projects: heroProjects,
   },
   nav,
+  agentos: {
+    label: 'Primary build',
+    statusLine: 'agentOS · Active build · Mar 2026',
+    githubHref: 'https://github.com/ThomasChiu08',
+    earlyAccess: 'Early access open',
+    buildLog,
+    vcAnswers: agentOSVCAnswers,
+  },
   projects: projectRecords,
   research: {
     label: 'Research lens',
-    title: 'How I think before I build.',
+    title: 'Why agentOS exists.',
     intro:
-      'The products are downstream of recurring questions about market structure, decision-making, and coordinated machine work.',
-    archiveLabel: 'Selected working notes',
+      'The products are downstream of recurring questions about market structure, decision-making, and coordinated machine work. The research came first.',
+    archiveLabel: 'Working notes',
     archiveMeta: 'Research archive / Mar 2026',
     directions: researchDirections,
     notes: researchNotes,
@@ -203,14 +259,15 @@ export const siteContent = {
     label: 'Operating principles',
     title: 'Systems are only useful when they hold under pressure.',
     intro:
-      'The standards are simple: build for signal, treat execution as design, and prefer structures that compound when conditions get messy.',
+      'Investor and trader by training. The edge is being able to read systems under pressure — and build them to hold.',
     principles,
   },
   links,
   contact: {
-    label: 'Closing note',
-    title: 'Research depth is only useful if it leads to systems that hold.',
+    label: 'Get in touch',
+    title: 'I\'m actively building. These conversations are useful.',
     body:
-      'I am interested in conversations at the intersection of markets, software systems, and AI agents, especially where better structure leads to better execution.',
+      'Currently looking for: early access conversations, research collaboration, seed-stage discussions. If you\'re thinking about agent reliability, coordination, or the infrastructure layer for agentic work — I want to talk.',
+    availability: ['Early access conversations', 'Research collaboration', 'Seed-stage discussions'],
   },
 }

@@ -2194,3 +2194,214 @@ dd {
 :root[data-theme='dark'] .principle-card {
   border-color: rgba(255, 255, 255, 0.06);
 }
+
+/* =========================================================
+   agentOS deep-dive section
+   ========================================================= */
+
+.section--agentos {
+  padding-top: var(--space-2xl);
+  padding-bottom: var(--space-2xl);
+}
+
+.agentos-status {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-xl);
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: rgba(88, 76, 64, 0.04);
+}
+
+.agentos-status__line {
+  font-family: 'IBM Plex Mono', 'SFMono-Regular', 'Menlo', monospace;
+  font-size: var(--text-xs);
+  color: var(--text-primary);
+  letter-spacing: 0.01em;
+}
+
+.agentos-status__line::before {
+  content: '●';
+  color: #4caf82;
+  margin-right: 6px;
+  font-size: 0.65em;
+}
+
+.agentos-status__access {
+  font-family: 'IBM Plex Mono', 'SFMono-Regular', 'Menlo', monospace;
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+.agentos-status__github {
+  margin-left: auto;
+}
+
+.agentos-grid {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: var(--space-xl);
+  align-items: start;
+}
+
+/* VC answer rows */
+.agentos-vc {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.vc-answer {
+  padding: var(--space-md) 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.vc-answer:last-child {
+  border-bottom: none;
+}
+
+.vc-answer__label {
+  font-family: 'IBM Plex Mono', 'SFMono-Regular', 'Menlo', monospace;
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+}
+
+.vc-answer__body {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  line-height: 1.65;
+}
+
+.vc-answer__cta {
+  margin-top: var(--space-sm);
+}
+
+/* Build log */
+.agentos-buildlog {
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(88, 76, 64, 0.03);
+}
+
+.agentos-buildlog__label {
+  font-family: 'IBM Plex Mono', 'SFMono-Regular', 'Menlo', monospace;
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: var(--space-sm);
+}
+
+.agentos-buildlog__rows {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.build-log__row {
+  display: grid;
+  grid-template-columns: 40px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  font-family: 'IBM Plex Mono', 'SFMono-Regular', 'Menlo', monospace;
+  font-size: 0.72rem;
+}
+
+.build-log__version {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.build-log__note {
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.build-log__date {
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.build-log__active-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #4caf82;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+.build-log__row--active .build-log__note {
+  color: var(--text-primary);
+}
+
+.build-log__row--active {
+  grid-template-columns: 40px 1fr 16px auto;
+}
+
+/* Research note date */
+.research-note__head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-sm);
+}
+
+.research-note__date {
+  font-family: 'IBM Plex Mono', 'SFMono-Regular', 'Menlo', monospace;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* Contact availability tags */
+.contact-availability {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
+}
+
+.contact-availability__tag {
+  padding: 5px 12px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  font-family: 'IBM Plex Mono', 'SFMono-Regular', 'Menlo', monospace;
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  background: rgba(88, 76, 64, 0.04);
+}
+
+/* Responsive — agentOS section */
+@media (max-width: 900px) {
+  .agentos-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .agentos-buildlog {
+    order: -1;
+  }
+}
+
+/* Dark mode — agentOS section */
+:root[data-theme='dark'] .agentos-status,
+:root[data-theme='dark'] .agentos-buildlog {
+  background: rgba(24, 23, 22, 0.5);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+:root[data-theme='dark'] .contact-availability__tag {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.08);
+}

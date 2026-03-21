@@ -1,5 +1,73 @@
 import { renderGlassyButton } from './glassyButton'
 
+export function renderAgentOSSection(agentos) {
+  const { statusLine, githubHref, earlyAccess, buildLog, vcAnswers } = agentos
+
+  const buildLogRows = buildLog
+    .map(
+      (entry) => `
+        <div class="build-log__row build-log__row--${entry.status}">
+          <span class="build-log__version">${entry.version}</span>
+          <span class="build-log__note">${entry.note}</span>
+          <span class="build-log__date">${entry.date}</span>
+          ${entry.status === 'active' ? '<span class="build-log__active-dot" aria-label="In progress"></span>' : ''}
+        </div>
+      `,
+    )
+    .join('')
+
+  const vcRows = Object.values(vcAnswers)
+    .map(
+      (item) => `
+        <div class="vc-answer">
+          <p class="vc-answer__label">${item.label}</p>
+          <p class="vc-answer__body">${item.body}</p>
+          ${
+            item.cta
+              ? renderGlassyButton({
+                  href: item.cta.href,
+                  label: item.cta.label,
+                  icon: 'arrow-up-right',
+                  size: 'sm',
+                  tone: 'neutral',
+                  className: 'vc-answer__cta',
+                  attributes: item.cta.external ? { target: '_blank', rel: 'noreferrer' } : {},
+                })
+              : ''
+          }
+        </div>
+      `,
+    )
+    .join('')
+
+  return `
+    <div class="agentos-status js-section-reveal">
+      <span class="agentos-status__line">${statusLine}</span>
+      <span class="agentos-status__access">${earlyAccess}</span>
+      ${renderGlassyButton({
+        href: githubHref,
+        label: 'GitHub',
+        icon: 'arrow-up-right',
+        size: 'sm',
+        tone: 'neutral',
+        className: 'agentos-status__github',
+        attributes: { target: '_blank', rel: 'noreferrer' },
+      })}
+    </div>
+    <div class="agentos-grid">
+      <div class="agentos-vc js-section-reveal">
+        ${vcRows}
+      </div>
+      <div class="agentos-buildlog js-section-reveal">
+        <p class="agentos-buildlog__label">Build log</p>
+        <div class="agentos-buildlog__rows">
+          ${buildLogRows}
+        </div>
+      </div>
+    </div>
+  `
+}
+
 export function renderNav(items) {
   return items
     .map((item) => `<a class="nav-link" href="${item.href}">${item.label}</a>`)
@@ -165,7 +233,10 @@ export function renderResearchNotes(items) {
       (item, index) => `
         <div class="research-note">
           <p class="research-note__index">0${index + 1}</p>
-          <p class="research-note__title">${item.title}</p>
+          <div class="research-note__head">
+            <p class="research-note__title">${item.title}</p>
+            ${item.date ? `<span class="research-note__date">${item.date}</span>` : ''}
+          </div>
           <p class="research-note__body">${item.body}</p>
         </div>
       `,

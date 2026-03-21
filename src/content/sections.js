@@ -5,6 +5,7 @@ import {
   renderNav,
   renderHeroProof,
   renderHeroProjectPanel,
+  renderAgentOSSection,
   renderCurrentWork,
   renderResearchDirections,
   renderResearchNotes,
@@ -66,7 +67,7 @@ export function renderPage(content = siteContent) {
               </div>
               <div class="hero-actions js-hero-actions">
                 ${renderGlassyButton({
-                  href: '#projects',
+                  href: '#agentos',
                   label: content.hero.primaryCta,
                   icon: 'arrow-right',
                   size: 'md',
@@ -109,13 +110,26 @@ export function renderPage(content = siteContent) {
           </div>
         </section>
 
+        <section id="agentos" class="section section--agentos">
+          <div class="container">
+            <div class="section-heading js-section-reveal">
+              <p class="section-label">${content.agentos.label}</p>
+              <h2 class="section-title">agentOS</h2>
+              <p class="section-intro">
+                The reliability problem in agentic execution is structural. I'm building the fix at the substrate level.
+              </p>
+            </div>
+            ${renderAgentOSSection(content.agentos)}
+          </div>
+        </section>
+
         <section id="projects" class="section section--projects">
           <div class="container">
             <div class="section-heading js-section-reveal">
-              <p class="section-label">Current work</p>
-              <h2 class="section-title">What I am building now.</h2>
+              <p class="section-label">Field validations</p>
+              <h2 class="section-title">The same thesis, different domains.</h2>
               <p class="section-intro">
-                The work is organized around one main system and two adjacent experiments. The goal is not coverage. It is coherence.
+                FocusBox and the Quant Research Platform are not side projects. They are the same question — how does execution hold under pressure — applied to human attention and market decisions.
               </p>
             </div>
             ${renderCurrentWork(content.projects)}
@@ -163,6 +177,13 @@ export function renderPage(content = siteContent) {
               <p class="section-label">${content.contact.label}</p>
               <h2 class="contact-title js-split-title">${content.contact.title}</h2>
               <p class="contact-copy">${content.contact.body}</p>
+              ${
+                content.contact.availability?.length
+                  ? `<div class="contact-availability">
+                ${content.contact.availability.map((item) => `<span class="contact-availability__tag">${item}</span>`).join('')}
+              </div>`
+                  : ''
+              }
               <div class="contact-cli" role="group" aria-label="Send a message">
                 <span class="contact-cli__prompt" aria-hidden="true">~/portfolio &gt;</span>
                 <input
