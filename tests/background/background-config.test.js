@@ -7,7 +7,7 @@ describe('backgroundConfig', () => {
     const heroState = getBackgroundState('hero')
     heroState.accent[0] = 0
 
-    expect(getBackgroundState('hero').accent[0]).toBe(112)
+    expect(getBackgroundState('hero').accent[0]).toBe(161)
     expect(getBackgroundState('missing-section')).toEqual(getBackgroundState('hero'))
   })
 

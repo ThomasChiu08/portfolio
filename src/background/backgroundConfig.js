@@ -1,7 +1,7 @@
 const backgroundStates = {
   hero: {
-    accent: [112, 123, 136],
-    secondary: [228, 222, 214],
+    accent: [161, 161, 170],
+    secondary: [228, 228, 231],
     routeOpacity: 0.24,
     nodeOpacity: 0.34,
     linkOpacity: 0.16,
@@ -16,8 +16,8 @@ const backgroundStates = {
     pointerStrength: 0.84,
   },
   projects: {
-    accent: [118, 129, 144],
-    secondary: [230, 225, 218],
+    accent: [113, 113, 122],
+    secondary: [228, 228, 231],
     routeOpacity: 0.3,
     nodeOpacity: 0.38,
     linkOpacity: 0.18,
@@ -32,8 +32,8 @@ const backgroundStates = {
     pointerStrength: 0.92,
   },
   research: {
-    accent: [102, 117, 137],
-    secondary: [222, 219, 214],
+    accent: [82, 82, 91],
+    secondary: [212, 212, 216],
     routeOpacity: 0.38,
     nodeOpacity: 0.42,
     linkOpacity: 0.22,
@@ -48,8 +48,8 @@ const backgroundStates = {
     pointerStrength: 0.96,
   },
   about: {
-    accent: [126, 129, 132],
-    secondary: [228, 223, 216],
+    accent: [161, 161, 170],
+    secondary: [228, 228, 231],
     routeOpacity: 0.2,
     nodeOpacity: 0.28,
     linkOpacity: 0.12,
@@ -64,8 +64,8 @@ const backgroundStates = {
     pointerStrength: 0.72,
   },
   contact: {
-    accent: [134, 125, 116],
-    secondary: [231, 223, 214],
+    accent: [113, 113, 122],
+    secondary: [212, 212, 216],
     routeOpacity: 0.14,
     nodeOpacity: 0.22,
     linkOpacity: 0.08,

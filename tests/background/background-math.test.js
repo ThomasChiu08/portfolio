@@ -23,9 +23,12 @@ describe('backgroundMath', () => {
 
     interpolateBackgroundState(current, target, 0.5)
 
+    const heroAccent0 = getBackgroundState('hero').accent[0]
     expect(current.accent).not.toEqual(getBackgroundState('hero').accent)
-    expect(current.accent[0]).toBeGreaterThan(getBackgroundState('hero').accent[0])
-    expect(current.accent[0]).toBeLessThan(targetAccent[0])
+    const low = Math.min(heroAccent0, targetAccent[0])
+    const high = Math.max(heroAccent0, targetAccent[0])
+    expect(current.accent[0]).toBeGreaterThanOrEqual(low)
+    expect(current.accent[0]).toBeLessThanOrEqual(high)
     expect(target.accent).toEqual(targetAccent)
   })
 
