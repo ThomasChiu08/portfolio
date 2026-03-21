@@ -10,6 +10,10 @@ export default defineConfig({
             return 'gsap'
           }
 
+          if (id.includes('/node_modules/ogl/')) {
+            return 'ogl'
+          }
+
           return undefined
         },
       },

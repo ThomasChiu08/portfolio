@@ -10,7 +10,8 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "gsap": "^3.14.2"
+    "gsap": "^3.14.2",
+    "ogl": "^1.0.11"
   },
   "devDependencies": {
     "jsdom": "^28.1.0",

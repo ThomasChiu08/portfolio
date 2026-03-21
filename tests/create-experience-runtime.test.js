@@ -31,6 +31,8 @@ describe('createExperienceRuntime', () => {
     const createThemeController = vi.fn(() => themeController)
     const splitTextReveal = { destroy: vi.fn() }
     const createSplitTextReveal = vi.fn(() => splitTextReveal)
+    const heroShaderLayer = { destroy: vi.fn(), setTheme: vi.fn(), refresh: vi.fn() }
+    const createHeroShaderLayer = vi.fn(() => heroShaderLayer)
     const modules = {
       gsap: { registerPlugin, context },
       ScrollTrigger: { refresh },
@@ -40,6 +42,7 @@ describe('createExperienceRuntime', () => {
       createBackgroundSystem,
       createThemeController,
       createSplitTextReveal,
+      createHeroShaderLayer,
     }
 
     const runtime = createExperienceRuntime({

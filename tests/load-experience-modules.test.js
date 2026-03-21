@@ -19,6 +19,9 @@ vi.mock('../src/experience/createThemeController', () => ({
 vi.mock('../src/animations/splitTextReveal', () => ({
   createSplitTextReveal: vi.fn(),
 }))
+vi.mock('../src/webgl/createHeroShaderLayer', () => ({
+  createHeroShaderLayer: vi.fn(),
+}))
 
 import { loadExperienceModules } from '../src/experience/loadExperienceModules'
 
@@ -34,6 +37,7 @@ describe('loadExperienceModules', () => {
     expect(modules).toHaveProperty('createBackgroundSystem')
     expect(modules).toHaveProperty('createThemeController')
     expect(modules).toHaveProperty('createSplitTextReveal')
+    expect(modules).toHaveProperty('createHeroShaderLayer')
   })
 
   it('returns an object with exactly the expected keys', async () => {
@@ -44,6 +48,7 @@ describe('loadExperienceModules', () => {
       'ScrollTrigger',
       'createBackgroundSystem',
       'createHeroProjectController',
+      'createHeroShaderLayer',
       'createHeroTimeline',
       'createSectionTransitions',
       'createSplitTextReveal',

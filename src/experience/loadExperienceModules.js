@@ -8,6 +8,7 @@ export async function loadExperienceModules() {
     { createBackgroundSystem },
     { createThemeController },
     { createSplitTextReveal },
+    { createHeroShaderLayer },
   ] = await Promise.all([
     import('gsap'),
     import('gsap/ScrollTrigger'),
@@ -17,6 +18,7 @@ export async function loadExperienceModules() {
     import('../background/createBackgroundSystem'),
     import('./createThemeController'),
     import('../animations/splitTextReveal'),
+    import('../webgl/createHeroShaderLayer'),
   ])
 
   return {
@@ -28,5 +30,6 @@ export async function loadExperienceModules() {
     createBackgroundSystem,
     createThemeController,
     createSplitTextReveal,
+    createHeroShaderLayer,
   }
 }

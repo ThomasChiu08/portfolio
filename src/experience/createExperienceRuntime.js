@@ -12,6 +12,7 @@ export function createExperienceRuntime({ modules, motion, scopeElement, heroPro
     createBackgroundSystem,
     createThemeController,
     createSplitTextReveal,
+    createHeroShaderLayer,
   } = modules
   const { reducedMotion, desktopMotion } = motion
 
@@ -37,7 +38,18 @@ export function createExperienceRuntime({ modules, motion, scopeElement, heroPro
   })
   cleanup.add(() => backgroundController?.destroy())
 
-  const themeController = createThemeController({ backgroundSystem: backgroundController })
+  const heroShaderLayer = createHeroShaderLayer({
+    scopeElement,
+    ScrollTrigger,
+    reducedMotion,
+    desktopMotion,
+  })
+  cleanup.add(() => heroShaderLayer?.destroy())
+
+  const themeController = createThemeController({
+    backgroundSystem: backgroundController,
+    heroShaderLayer,
+  })
   cleanup.add(() => themeController?.destroy())
 
   cleanup.add(() => {

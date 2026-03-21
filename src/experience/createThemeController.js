@@ -1,7 +1,7 @@
 const STORAGE_KEY = 'portfolio-theme'
 const THEME_ATTR = 'data-theme'
 
-export function createThemeController({ backgroundSystem } = {}) {
+export function createThemeController({ backgroundSystem, heroShaderLayer } = {}) {
   const root = document.documentElement
 
   function getSystemPreference() {
@@ -31,6 +31,7 @@ export function createThemeController({ backgroundSystem } = {}) {
   function applyTheme(theme) {
     root.setAttribute(THEME_ATTR, theme)
     backgroundSystem?.setTheme?.(theme)
+    heroShaderLayer?.setTheme?.(theme)
 
     const btn = document.querySelector('[data-theme-toggle]')
     if (btn) {
