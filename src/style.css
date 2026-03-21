@@ -19,6 +19,33 @@
   --radius-lg: 28px;
   --radius-md: 20px;
   --radius-sm: 14px;
+
+  /* Micro-interaction Vars */
+  --glass-blur-light: blur(12px);
+  --glass-border-light: rgba(255, 255, 255, 0.44);
+  --duration-fast: 220ms;
+  --duration-normal: 420ms;
+  --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-spring-gentle: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* TASK 1: SplitText Word Reveal */
+.js-split-title {
+  overflow: hidden;
+  line-height: 1.1;
+}
+
+.js-split-title .word {
+  display: inline-block;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js-split-title .word {
+    transform: none !important;
+    opacity: 1 !important;
+    will-change: auto;
+  }
 }
 
 * {
@@ -1039,11 +1066,11 @@ dd {
   text-align: left;
   cursor: pointer;
   transition:
-    transform 240ms cubic-bezier(0.22, 1, 0.36, 1),
-    border-color 220ms ease,
-    background 220ms ease,
-    opacity 220ms ease,
-    box-shadow 220ms ease;
+    transform var(--duration-normal) var(--ease-out-expo),
+    border-color var(--duration-fast) ease,
+    background var(--duration-fast) ease,
+    box-shadow var(--duration-normal) var(--ease-out-expo),
+    opacity 220ms ease;
 }
 
 .hero-project-rail__item::before {
@@ -1056,21 +1083,42 @@ dd {
   pointer-events: none;
 }
 
+.hero-project-rail__item:hover,
+.hero-project-rail__item:focus-visible {
+  transform: translateY(-2px) scale(1.02);
+  border-color: var(--glass-border-light);
+  box-shadow: 0 12px 32px rgba(93, 75, 50, 0.06);
+}
+
 .hero-project-rail__item[data-active='true'] {
   border-color: rgba(255, 255, 255, 0.48);
   background: rgba(251, 248, 242, 0.34);
-  transform: translateX(-4px);
+  transform: scale(1.01);
 }
 
 .hero-project-rail__item[data-committed='true'] {
-  border-color: rgba(255, 255, 255, 0.56);
+  border-color: rgba(255, 255, 255, 0.62);
   background: rgba(251, 248, 242, 0.52);
-  box-shadow: 0 16px 32px rgba(93, 75, 50, 0.05);
+  box-shadow: 0 20px 48px rgba(93, 75, 50, 0.1);
+  transform: translateY(-4px) scale(1.02);
 }
 
-.hero-project-rail__item:hover,
-.hero-project-rail__item:focus-visible {
-  border-color: rgba(255, 255, 255, 0.48);
+.hero-project-rail__item[data-committed='true']::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--accent);
+  border-radius: inherit inherit 0 0;
+  opacity: 1;
+}
+
+@media (pointer: coarse) {
+  .hero-project-rail__item:active {
+    transform: scale(0.97);
+  }
 }
 
 .hero-project-rail__index {
@@ -1445,7 +1493,6 @@ dd {
   line-height: 1.04;
   letter-spacing: -0.035em;
 }
-
 .section--contact {
   min-height: 72svh;
   display: flex;
