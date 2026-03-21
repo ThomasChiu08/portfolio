@@ -53,24 +53,6 @@ export function createHeroProjectController({ scopeElement, projects = [] }) {
     transitionResetTimeout = null
   }
 
-  function updatePointerGlow(clientX, clientY) {
-    const rect = root.getBoundingClientRect()
-
-    if (!rect.width || !rect.height) {
-      return
-    }
-
-    const x = Math.min(Math.max(((clientX - rect.left) / rect.width) * 100, 18), 86)
-    const y = Math.min(Math.max(((clientY - rect.top) / rect.height) * 100, 18), 84)
-    root.style.setProperty('--deck-glow-x', `${x}%`)
-    root.style.setProperty('--deck-glow-y', `${y}%`)
-  }
-
-  function resetPointerGlow() {
-    root.style.setProperty('--deck-glow-x', '74%')
-    root.style.setProperty('--deck-glow-y', '34%')
-  }
-
   function updateView() {
     syncHeroProjectSwitcherView({
       root,
@@ -194,14 +176,6 @@ export function createHeroProjectController({ scopeElement, projects = [] }) {
     return railButton
   }
 
-  function handlePointerMove(event) {
-    if (touchMode) {
-      return
-    }
-
-    updatePointerGlow(event.clientX, event.clientY)
-  }
-
   function handlePointerOver(event) {
     if (touchMode || switchState === HERO_PROJECT_SWITCH_STATES.transition) {
       return
@@ -217,8 +191,6 @@ export function createHeroProjectController({ scopeElement, projects = [] }) {
   }
 
   function handlePointerLeave() {
-    resetPointerGlow()
-
     if (touchMode || switchState !== HERO_PROJECT_SWITCH_STATES.candidate) {
       return
     }
@@ -263,6 +235,7 @@ export function createHeroProjectController({ scopeElement, projects = [] }) {
       return
     }
 
+    event.preventDefault()
     const project = getProject(activeIndex)
     if (!project) return
     navigateToProject(project.slug)
@@ -318,7 +291,6 @@ export function createHeroProjectController({ scopeElement, projects = [] }) {
     }
   }
 
-  root.addEventListener('pointermove', handlePointerMove)
   root.addEventListener('pointerover', handlePointerOver)
   root.addEventListener('pointerleave', handlePointerLeave)
   root.addEventListener('focusin', handleFocusIn)
@@ -326,7 +298,6 @@ export function createHeroProjectController({ scopeElement, projects = [] }) {
   root.addEventListener('click', handleClick)
   root.addEventListener('keydown', handleKeydown)
 
-  resetPointerGlow()
   updateView()
 
   return {
@@ -343,15 +314,12 @@ export function createHeroProjectController({ scopeElement, projects = [] }) {
         spotlightElement = null
       }
 
-      root.removeEventListener('pointermove', handlePointerMove)
       root.removeEventListener('pointerover', handlePointerOver)
       root.removeEventListener('pointerleave', handlePointerLeave)
       root.removeEventListener('focusin', handleFocusIn)
       root.removeEventListener('focusout', handleFocusOut)
       root.removeEventListener('click', handleClick)
       root.removeEventListener('keydown', handleKeydown)
-      root.style.removeProperty('--deck-glow-x')
-      root.style.removeProperty('--deck-glow-y')
       root.removeAttribute('data-touch-mode')
       root.removeAttribute('data-switch-state')
       root.removeAttribute('data-committed-project')

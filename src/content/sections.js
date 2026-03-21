@@ -95,13 +95,6 @@ export function renderPage(content = siteContent) {
                 data-active-project="${activeHeroProject.slug}"
                 data-switch-state="idle"
               >
-                <div class="hero-projects__aura" aria-hidden="true"></div>
-                <div class="hero-projects__veil" aria-hidden="true"></div>
-                <div class="hero-projects__nav">
-                  <p class="hero-systems-card__label">${content.hero.projectsLabel}</p>
-                  <p class="hero-projects__nav-note" data-project-deck-note>Hover a memo to preview</p>
-                </div>
-
                 <div id="hero-project-surface" class="hero-projects__switcher">
                   ${renderHeroProjectPanel(activeHeroProject, content.hero.projects)}
                 </div>

@@ -5,9 +5,6 @@ import {
   clampIndex,
   createHeroProjectSwitcherModel,
   formatProjectIndex,
-  getDeckNote,
-  getPanelStateLabel,
-  getStatusline,
 } from '../src/experience/heroProjectSwitcherModel'
 
 describe('heroProjectSwitcherModel', () => {
@@ -45,18 +42,11 @@ describe('heroProjectSwitcherModel', () => {
     expect(model.getProjectNumber('missing')).toBe('01')
   })
 
-  it('returns stable copy for each switch state', () => {
-    const project = projects[1]
-
-    expect(getDeckNote({ state: HERO_PROJECT_SWITCH_STATES.idle, touchMode: false })).toBe(
-      'Hover a memo to preview',
-    )
-    expect(getDeckNote({ state: HERO_PROJECT_SWITCH_STATES.candidate, touchMode: true })).toBe(
-      'Tap to select memo',
-    )
-    expect(getPanelStateLabel(HERO_PROJECT_SWITCH_STATES.committed)).toBe('Pinned selection')
-    expect(
-      getStatusline(project, HERO_PROJECT_SWITCH_STATES.transition),
-    ).toBe('Opening memo / Product design')
+  it('exposes frozen switch state enum', () => {
+    expect(HERO_PROJECT_SWITCH_STATES.idle).toBe('idle')
+    expect(HERO_PROJECT_SWITCH_STATES.candidate).toBe('candidate')
+    expect(HERO_PROJECT_SWITCH_STATES.committed).toBe('committed')
+    expect(HERO_PROJECT_SWITCH_STATES.transition).toBe('transition')
+    expect(Object.isFrozen(HERO_PROJECT_SWITCH_STATES)).toBe(true)
   })
 })
