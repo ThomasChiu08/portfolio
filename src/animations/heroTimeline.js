@@ -1,10 +1,9 @@
 import { getHeroMotionPreset } from './motionPresets'
 
-export function createHeroTimeline({ gsap, reducedMotion, desktopMotion, sceneController }) {
+export function createHeroTimeline({ gsap, reducedMotion, desktopMotion }) {
   const motion = getHeroMotionPreset({
     reducedMotion,
     desktopMotion,
-    baseCameraZ: sceneController?.sceneState?.cameraBaseZ ?? 0,
   })
 
   const timeline = gsap.timeline({
@@ -12,65 +11,6 @@ export function createHeroTimeline({ gsap, reducedMotion, desktopMotion, sceneCo
       ease: 'power3.out',
     },
   })
-
-  if (sceneController) {
-    const { coreAnchor, sceneState } = sceneController
-    const baseCameraZ = sceneState.cameraBaseZ
-
-    coreAnchor.position.x = sceneState.anchorBaseX + motion.anchorDrift
-    coreAnchor.position.y = sceneState.anchorBaseY + motion.anchorLift
-    coreAnchor.scale.setScalar(sceneState.anchorBaseScale * motion.introScale)
-    sceneState.sceneIntro = motion.introScale
-    sceneState.cameraBaseZ = motion.introZ
-
-    timeline
-      .fromTo(
-        coreAnchor.position,
-        {
-          x: sceneState.anchorBaseX + motion.anchorDrift,
-          y: sceneState.anchorBaseY + motion.anchorLift,
-        },
-        {
-          x: sceneState.anchorBaseX,
-          y: sceneState.anchorBaseY,
-          duration: motion.introAnchorDuration,
-          ease: 'expo.out',
-        },
-        motion.introPhaseStart,
-      )
-      .fromTo(
-        coreAnchor.scale,
-        {
-          x: sceneState.anchorBaseScale * motion.introScale,
-          y: sceneState.anchorBaseScale * motion.introScale,
-          z: sceneState.anchorBaseScale * motion.introScale,
-        },
-        {
-          x: sceneState.anchorBaseScale,
-          y: sceneState.anchorBaseScale,
-          z: sceneState.anchorBaseScale,
-          duration: motion.introScaleDuration,
-          ease: 'expo.out',
-        },
-        motion.introPhaseStart,
-      )
-      .fromTo(
-        sceneState,
-        {
-          sceneIntro: motion.introScale,
-          cameraBaseZ: motion.introZ,
-          corePulse: motion.introCorePulseStart,
-        },
-        {
-          sceneIntro: 1,
-          cameraBaseZ: baseCameraZ,
-          corePulse: motion.introCorePulseEnd,
-          duration: motion.introStateDuration,
-          ease: 'expo.out',
-        },
-        motion.introPhaseStart,
-      )
-  }
 
   return timeline
     .fromTo(

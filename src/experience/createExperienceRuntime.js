@@ -17,35 +17,49 @@ export function createExperienceRuntime({ modules, motion, scopeElement, heroPro
 
   const root = document.documentElement
   const cleanup = createCleanupQueue()
+
+  // Register in intended teardown order (queue runs FIFO):
+  // 1. stop animations, 2. destroy controllers, 3. clean CSS props
+  let animationContext = null
+  cleanup.add(() => animationContext?.revert())
+
   const heroProjectController = createHeroProjectController({
     scopeElement,
     projects: heroProjects,
   })
+  cleanup.add(() => heroProjectController?.destroy())
+
   const backgroundController = createBackgroundSystem({
     scopeElement,
     reducedMotion,
   })
-
-  const animationContext = gsap.context(() => {
-    createHeroTimeline({
-      gsap,
-      reducedMotion,
-      desktopMotion,
-      sceneController: null,
-    })
-    createSectionTransitions({ gsap, reducedMotion })
-  }, scopeElement)
-
-  cleanup.add(() => animationContext?.revert())
-  cleanup.add(() => heroProjectController?.destroy())
   cleanup.add(() => backgroundController?.destroy())
+
   cleanup.add(() => {
     for (const property of runtimeCleanupProperties) {
       root.style.removeProperty(property)
     }
   })
 
-  ScrollTrigger.refresh()
+  let runtimeReady = false
+
+  try {
+    animationContext = gsap.context(() => {
+      createHeroTimeline({
+        gsap,
+        reducedMotion,
+        desktopMotion,
+      })
+      createSectionTransitions({ gsap, reducedMotion })
+    }, scopeElement)
+
+    ScrollTrigger.refresh()
+    runtimeReady = true
+  } finally {
+    if (!runtimeReady) {
+      cleanup.destroy()
+    }
+  }
 
   return {
     destroy() {

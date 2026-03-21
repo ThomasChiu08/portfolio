@@ -1,4 +1,4 @@
-export function getHeroMotionPreset({ reducedMotion, desktopMotion, baseCameraZ }) {
+export function getHeroMotionPreset({ reducedMotion, desktopMotion, baseCameraZ = 0 }) {
   return {
     duration: reducedMotion ? 0.55 : desktopMotion ? 1 : 0.88,
     anchorLift: reducedMotion ? 0.06 : desktopMotion ? 0.18 : 0.1,

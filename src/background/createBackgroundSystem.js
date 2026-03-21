@@ -247,17 +247,21 @@ export function createBackgroundSystem({
     render(lastFrame / 1000 || 0)
   }
 
-  const sectionController = reducedMotion
-    ? null
-    : createSectionStateController({
-        scopeElement,
-        onChange(sectionId) {
-          activeSectionId = sectionId || 'hero'
-          const nextState = getBackgroundState(activeSectionId)
-          Object.assign(targetState, nextState)
-          shell.dataset.sceneSection = activeSectionId
-        },
-      })
+  const sectionController = createSectionStateController({
+    scopeElement,
+    onChange(sectionId) {
+      activeSectionId = sectionId || 'hero'
+      const nextState = getBackgroundState(activeSectionId)
+      Object.assign(targetState, nextState)
+      shell.dataset.sceneSection = activeSectionId
+
+      if (reducedMotion) {
+        Object.assign(currentState, nextState)
+        applyShellStyles(lastFrame / 1000 || 0)
+        render(lastFrame / 1000 || 0)
+      }
+    },
+  })
 
   activeSectionId = sectionController?.getActiveSection?.() ?? 'hero'
   Object.assign(targetState, getBackgroundState(activeSectionId))

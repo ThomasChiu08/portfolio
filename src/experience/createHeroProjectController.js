@@ -11,11 +11,11 @@ import {
 const TRANSITION_RESET_MS = 420
 
 function getScrollBehavior() {
-  return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
+  return window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ? 'auto' : 'smooth'
 }
 
 function prefersCoarsePointer() {
-  return window.matchMedia?.('(pointer: coarse)').matches ?? false
+  return window.matchMedia?.('(pointer: coarse)')?.matches ?? false
 }
 
 export function createHeroProjectController({ scopeElement, projects = [] }) {
@@ -152,13 +152,21 @@ export function createHeroProjectController({ scopeElement, projects = [] }) {
     const project = model.getProjectBySlug(slug)
     const targetSelector = project?.links?.viewProject
 
-    if (!targetSelector || !targetSelector.startsWith('#')) {
+    if (!targetSelector) {
+      return
+    }
+
+    if (!targetSelector.startsWith('#')) {
+      window.location.assign(targetSelector)
       return
     }
 
     const target = document.querySelector(targetSelector)
 
     if (!target) {
+      if (typeof import.meta !== 'undefined' && import.meta.env?.DEV) {
+        console.warn(`[hero] navigateToProject: no element found for "${targetSelector}"`)
+      }
       return
     }
 
@@ -170,7 +178,9 @@ export function createHeroProjectController({ scopeElement, projects = [] }) {
     })
     window.history.replaceState(null, '', targetSelector)
     transitionResetTimeout = window.setTimeout(() => {
-      setSwitchState(hasCommittedSelection ? HERO_PROJECT_SWITCH_STATES.committed : HERO_PROJECT_SWITCH_STATES.idle)
+      setSwitchState(
+        hasCommittedSelection ? HERO_PROJECT_SWITCH_STATES.committed : HERO_PROJECT_SWITCH_STATES.idle,
+      )
     }, TRANSITION_RESET_MS)
   }
 
@@ -224,6 +234,18 @@ export function createHeroProjectController({ scopeElement, projects = [] }) {
     }
 
     previewProject(railButton.dataset.projectRail)
+  }
+
+  function handleFocusOut(event) {
+    if (root.contains(event.relatedTarget)) {
+      return
+    }
+
+    if (switchState !== HERO_PROJECT_SWITCH_STATES.candidate) {
+      return
+    }
+
+    restoreCommittedProject()
   }
 
   function handleClick(event) {
@@ -296,6 +318,7 @@ export function createHeroProjectController({ scopeElement, projects = [] }) {
   root.addEventListener('pointerover', handlePointerOver)
   root.addEventListener('pointerleave', handlePointerLeave)
   root.addEventListener('focusin', handleFocusIn)
+  root.addEventListener('focusout', handleFocusOut)
   root.addEventListener('click', handleClick)
   root.addEventListener('keydown', handleKeydown)
 
@@ -320,6 +343,7 @@ export function createHeroProjectController({ scopeElement, projects = [] }) {
       root.removeEventListener('pointerover', handlePointerOver)
       root.removeEventListener('pointerleave', handlePointerLeave)
       root.removeEventListener('focusin', handleFocusIn)
+      root.removeEventListener('focusout', handleFocusOut)
       root.removeEventListener('click', handleClick)
       root.removeEventListener('keydown', handleKeydown)
       root.style.removeProperty('--deck-glow-x')

@@ -50,6 +50,7 @@ function syncProjectRail(elements, projectIndex, activeIndex, committedIndex) {
     button.dataset.active = isActive ? 'true' : 'false'
     button.dataset.committed = isCommitted ? 'true' : 'false'
     button.setAttribute('aria-pressed', isCommitted ? 'true' : 'false')
+    button.setAttribute('aria-current', isActive && !isCommitted ? 'true' : 'false')
     button.tabIndex = isActive ? 0 : -1
   })
 }
