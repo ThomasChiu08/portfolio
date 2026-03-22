@@ -1,5 +1,5 @@
 const nav = [
-  { label: 'agentOS', href: '#agentos' },
+  { label: 'Projects', href: '#agentos' },
   { label: 'Research', href: '#research' },
   { label: 'About', href: '#about' },
   { label: 'Contact', href: '#contact' },
@@ -229,8 +229,6 @@ export const siteContent = {
     secondaryCta: 'Research Lens',
     micro:
       'Investor and trader by discipline. Research depth as the edge.',
-    visualBadge: 'Project deck',
-    visualHint: 'Preview a project memo, then open the section.',
     projectsLabel: 'Project deck',
     activeProject: defaultHeroProject.slug,
     projects: heroProjects,

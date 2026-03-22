@@ -4,7 +4,7 @@ import { siteContent } from './siteContent'
 import {
   renderNav,
   renderHeroProof,
-  renderHeroCarousel,
+  renderHeroProjectPanel,
   renderAgentOSSection,
   renderCurrentWork,
   renderResearchDirections,
@@ -88,16 +88,16 @@ export function renderPage(content = siteContent) {
               <p class="hero-micro js-hero-micro">${content.hero.micro}</p>
             </div>
 
-            <div
-              class="hero-carousel js-hero-card js-hero-carousel"
-              role="region"
-              aria-roledescription="carousel"
+            <aside
+              class="hero-projects js-hero-card js-hero-projects js-hero-visual"
               aria-label="${content.hero.projectsLabel}"
-              data-active-slide="${activeHeroProject.slug}"
-              data-play-state="playing"
+              data-active-project="${activeHeroProject.slug}"
+              data-switch-state="idle"
             >
-              ${renderHeroCarousel(activeHeroProject, content.hero.projects)}
-            </div>
+              <div id="hero-project-surface" class="hero-projects__switcher">
+                ${renderHeroProjectPanel(activeHeroProject, content.hero.projects)}
+              </div>
+            </aside>
           </div>
         </section>
 

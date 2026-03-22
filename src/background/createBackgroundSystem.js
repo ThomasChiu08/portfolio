@@ -76,6 +76,10 @@ export function createBackgroundSystem({
     }
   }
 
+  // Cache previous CSS values to skip redundant DOM writes
+  let prevAccentRgb = ''
+  let prevSecondaryRgb = ''
+
   function applyShellStyles(time = 0) {
     const primaryDriftX = Math.sin(time * 0.045) * 10 + Math.cos(time * 0.022) * 5
     const primaryDriftY = Math.cos(time * 0.04) * 7
@@ -87,30 +91,34 @@ export function createBackgroundSystem({
       : currentState.accent.map(Math.round)
     const displaySecondary = isDarkTheme ? [28, 26, 24] : currentState.secondary.map(Math.round)
 
-    shell.style.setProperty('--signal-accent-rgb', displayAccent.join(', '))
-    shell.style.setProperty('--signal-secondary-rgb', displaySecondary.join(', '))
-    grid.style.opacity = currentState.gridOpacity.toFixed(3)
-    vignette.style.opacity = currentState.vignetteOpacity.toFixed(3)
-    atmospherePrimary.style.opacity = currentState.primaryAtmosphereOpacity.toFixed(3)
-    atmosphereSecondary.style.opacity = currentState.secondaryAtmosphereOpacity.toFixed(3)
-    atmospherePrimary.style.transform = `translate3d(${(
-      currentState.fieldShiftX +
-      primaryDriftX +
-      pointer.x * 12 * currentState.pointerStrength
-    ).toFixed(2)}px, ${(
-      currentState.fieldShiftY +
-      primaryDriftY +
-      pointer.y * 9 * currentState.pointerStrength
-    ).toFixed(2)}px, 0) scale(1.04)`
-    atmosphereSecondary.style.transform = `translate3d(${(
-      currentState.fieldShiftX * -0.45 +
-      secondaryDriftX +
-      pointer.x * -16 * currentState.pointerStrength
-    ).toFixed(2)}px, ${(
-      currentState.fieldShiftY * -0.28 +
-      secondaryDriftY +
-      pointer.y * -12 * currentState.pointerStrength
-    ).toFixed(2)}px, 0) scale(1.08)`
+    // Only write CSS custom properties when values actually change
+    const accentRgb = `${displayAccent[0]}, ${displayAccent[1]}, ${displayAccent[2]}`
+    const secondaryRgb = `${displaySecondary[0]}, ${displaySecondary[1]}, ${displaySecondary[2]}`
+    if (accentRgb !== prevAccentRgb) {
+      shell.style.setProperty('--signal-accent-rgb', accentRgb)
+      prevAccentRgb = accentRgb
+    }
+    if (secondaryRgb !== prevSecondaryRgb) {
+      shell.style.setProperty('--signal-secondary-rgb', secondaryRgb)
+      prevSecondaryRgb = secondaryRgb
+    }
+
+    // Batch opacity + transform writes via cssText to minimize style recalcs
+    const gridOp = Math.round(currentState.gridOpacity * 1000) / 1000
+    const vigOp = Math.round(currentState.vignetteOpacity * 1000) / 1000
+    const primOp = Math.round(currentState.primaryAtmosphereOpacity * 1000) / 1000
+    const secOp = Math.round(currentState.secondaryAtmosphereOpacity * 1000) / 1000
+
+    grid.style.opacity = gridOp
+    vignette.style.opacity = vigOp
+
+    const pX = Math.round((currentState.fieldShiftX + primaryDriftX + pointer.x * 12 * currentState.pointerStrength) * 100) / 100
+    const pY = Math.round((currentState.fieldShiftY + primaryDriftY + pointer.y * 9 * currentState.pointerStrength) * 100) / 100
+    const sX = Math.round((currentState.fieldShiftX * -0.45 + secondaryDriftX + pointer.x * -16 * currentState.pointerStrength) * 100) / 100
+    const sY = Math.round((currentState.fieldShiftY * -0.28 + secondaryDriftY + pointer.y * -12 * currentState.pointerStrength) * 100) / 100
+
+    atmospherePrimary.style.cssText = `opacity:${primOp};transform:translate3d(${pX}px,${pY}px,0) scale(1.04)`
+    atmosphereSecondary.style.cssText = `opacity:${secOp};transform:translate3d(${sX}px,${sY}px,0) scale(1.08)`
   }
 
   function resize() {
@@ -202,7 +210,7 @@ export function createBackgroundSystem({
 
     const frameBudget = 1000 / profile.maxFps
 
-    if (!reducedMotion && timestamp - lastFrame < frameBudget) {
+    if (!reducedMotion && timestamp - lastFrame < frameBudget * 0.95) {
       return
     }
 

@@ -13,11 +13,12 @@ export function createExperienceRuntime({ modules, motion, scopeElement, heroPro
     SplitText,
     createHeroTimeline,
     createSectionTransitions,
-    createHeroCarouselController,
+    createHeroProjectController,
     createBackgroundSystem,
     createThemeController,
     createSplitTextReveal,
     createHeroShaderLayer,
+    createHeroProjectFlip,
     registerBrandEasing,
   } = modules
   const { reducedMotion, desktopMotion } = motion
@@ -48,7 +49,40 @@ export function createExperienceRuntime({ modules, motion, scopeElement, heroPro
       effects: !reducedMotion,
       normalizeScroll: false,
     })
+    // Register smoother cleanup immediately — LAST to run (after ScrollTriggers)
+    cleanup.add(() => smoother?.kill())
   }
+
+  // Smooth-scroll nav anchors via ScrollSmoother (replaces CSS scroll-behavior)
+  if (smoother) {
+    const navLinks = scopeElement.querySelectorAll('.nav-link, .brand, .masthead__home-button')
+    const handleNavClick = (e) => {
+      const href = e.currentTarget.getAttribute('href')
+      if (href?.startsWith('#')) {
+        e.preventDefault()
+        smoother.scrollTo(href, true, 'top top')
+      }
+    }
+    navLinks.forEach((link) => link.addEventListener('click', handleNavClick))
+    cleanup.add(() => navLinks.forEach((link) => link.removeEventListener('click', handleNavClick)))
+  }
+
+  // Flip adapter for hero project switcher
+  const flipAdapter = createHeroProjectFlip({ Flip, gsap, reducedMotion })
+
+  const heroProjectController = createHeroProjectController({
+    scopeElement,
+    projects: heroProjects,
+    Observer: reducedMotion ? null : Observer,
+    flipAdapter,
+  })
+  cleanup.add(() => heroProjectController?.destroy())
+
+  const backgroundController = createBackgroundSystem({
+    scopeElement,
+    reducedMotion,
+  })
+  cleanup.add(() => backgroundController?.destroy())
 
   const heroShaderLayer = createHeroShaderLayer({
     scopeElement,
@@ -57,25 +91,6 @@ export function createExperienceRuntime({ modules, motion, scopeElement, heroPro
     desktopMotion,
   })
   cleanup.add(() => heroShaderLayer?.destroy())
-
-  // Hero carousel controller — connected to shader layer for slide transitions
-  const heroCarouselController = createHeroCarouselController({
-    scopeElement,
-    projects: heroProjects,
-    Observer: reducedMotion ? null : Observer,
-    gsap,
-    reducedMotion,
-    onSlideChange(slug) {
-      heroShaderLayer.setActiveProject(slug)
-    },
-  })
-  cleanup.add(() => heroCarouselController?.destroy())
-
-  const backgroundController = createBackgroundSystem({
-    scopeElement,
-    reducedMotion,
-  })
-  cleanup.add(() => backgroundController?.destroy())
 
   const themeController = createThemeController({
     backgroundSystem: backgroundController,
@@ -106,9 +121,6 @@ export function createExperienceRuntime({ modules, motion, scopeElement, heroPro
     // SplitText runs outside GSAP context — owns its own ScrollTriggers
     const splitTextReveal = createSplitTextReveal({ gsap, scopeElement, reducedMotion })
     cleanup.add(() => splitTextReveal?.destroy())
-
-    // ScrollSmoother cleanup LAST — after all ScrollTriggers are reverted
-    cleanup.add(() => smoother?.kill())
 
     runtimeReady = true
   } finally {

@@ -1,4 +1,5 @@
 import { renderGlassyButton } from './glassyButton'
+import { formatProjectIndex } from '../experience/heroProjectSwitcherModel'
 
 export function renderAgentOSSection(agentos) {
   const { statusLine, githubHref, earlyAccess, buildLog, vcAnswers } = agentos
@@ -78,109 +79,52 @@ export function renderHeroProof(items) {
   return items.map((item) => `<span class="hero-proof__item">${item}</span>`).join('')
 }
 
-export function formatProjectIndex(index) {
-  return String(index + 1).padStart(2, '0')
-}
-
-/* ── Hero Carousel ── */
-
-export function renderHeroCarouselSlide(item, index, total) {
-  return `
-    <div
-      class="hero-carousel__slide"
-      role="group"
-      aria-roledescription="slide"
-      aria-label="${formatProjectIndex(index)} of ${formatProjectIndex(total - 1)}"
-      data-carousel-slide="${item.slug}"
-      ${index === 0 ? '' : 'inert'}
-    >
-      <div class="hero-carousel__content">
-        <span class="hero-carousel__counter" data-carousel-counter>
-          ${formatProjectIndex(index)} / ${formatProjectIndex(total - 1)}
-        </span>
-        <h2 class="hero-carousel__title" data-carousel-title>${item.name}</h2>
-        <p class="hero-carousel__thesis" data-carousel-thesis>${item.thesis}</p>
-        <p class="hero-carousel__status" data-carousel-stage>
-          <span class="hero-carousel__status-dot" aria-hidden="true"></span>
-          ${item.stage}
-        </p>
-        <a
-          class="hero-carousel__explore"
-          href="${item.links?.viewProject ?? '#'}"
-          data-carousel-explore
-        >
-          Explore <span aria-hidden="true">&rarr;</span>
-        </a>
-      </div>
-    </div>
-  `
-}
-
-export function renderHeroCarouselDot(item, index, isActive) {
-  return `
-    <button
-      type="button"
-      class="hero-carousel__dot"
-      data-carousel-dot="${item.slug}"
-      data-carousel-dot-index="${index}"
-      aria-label="Go to ${item.name}"
-      ${isActive ? 'aria-current="true"' : ''}
-    >
-      <svg class="hero-carousel__dot-ring" viewBox="0 0 20 20" aria-hidden="true">
-        <circle class="hero-carousel__dot-track" cx="10" cy="10" r="8" />
-        <circle class="hero-carousel__dot-progress" cx="10" cy="10" r="8" />
-      </svg>
-    </button>
-  `
-}
-
-export function renderHeroCarousel(activeProject, projects) {
-  const slides = projects
-    .map((item, i) => renderHeroCarouselSlide(item, i, projects.length))
-    .join('')
-
-  const dots = projects
-    .map((item, i) => renderHeroCarouselDot(item, i, item.slug === activeProject.slug))
-    .join('')
-
-  return `
-    <div class="hero-carousel__track">
-      ${slides}
-    </div>
-
-    <div class="hero-carousel__controls">
-      <div class="hero-carousel__pagination" role="tablist" aria-label="Project slides">
-        ${dots}
-      </div>
-
-      <div class="hero-carousel__nav">
+export function renderHeroProjectDots(items, activeSlug) {
+  return items
+    .map((item) => {
+      const isActive = item.slug === activeSlug
+      return `
         <button
           type="button"
-          class="hero-carousel__arrow hero-carousel__arrow--prev"
-          data-carousel-prev
-          aria-label="Previous project"
+          class="hero-projects__dot-btn"
+          data-project-rail="${item.slug}"
+          data-project-target="${item.links?.viewProject ?? ''}"
+          data-active="${isActive}"
+          aria-label="${item.name}"
+          title="${item.name}"
         >
-          <span aria-hidden="true">&larr;</span>
+          <span class="hero-projects__dot" aria-hidden="true"></span>
         </button>
-        <button
-          type="button"
-          class="hero-carousel__arrow hero-carousel__arrow--next"
-          data-carousel-next
-          aria-label="Next project"
-        >
-          <span aria-hidden="true">&rarr;</span>
-        </button>
+      `
+    })
+    .join('')
+}
+
+export function renderHeroProjectPanel(item, items) {
+  const activeIndex = items.findIndex((project) => project.slug === item.slug)
+
+  return `
+    <article class="hero-projects__panel" data-project-panel data-panel-project="${item.slug}">
+      <span class="hero-projects__eyebrow" data-project-index>${formatProjectIndex(activeIndex)}</span>
+
+      <div class="hero-projects__panel-body" data-project-body>
+        <h2 class="hero-projects__panel-name" data-project-name>${item.name}</h2>
+        <p class="hero-projects__panel-thesis" data-project-thesis>${item.thesis}</p>
       </div>
 
-      <button
-        type="button"
-        class="hero-carousel__play-toggle"
-        data-carousel-play-toggle
-        aria-label="Pause auto-play"
-      >
-        <span class="hero-carousel__play-icon" aria-hidden="true"></span>
-      </button>
-    </div>
+      <p class="hero-projects__status" data-project-stage>
+        <span class="hero-projects__status-dot" aria-hidden="true"></span>
+        ${item.stage}
+      </p>
+
+      <nav class="hero-projects__dots" aria-label="Project index">
+        ${renderHeroProjectDots(items, item.slug)}
+      </nav>
+
+      <a class="hero-projects__open" data-project-open href="#">
+        Open <span aria-hidden="true">&rarr;</span>
+      </a>
+    </article>
   `
 }
 
