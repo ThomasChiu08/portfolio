@@ -13,12 +13,11 @@ export function createExperienceRuntime({ modules, motion, scopeElement, heroPro
     SplitText,
     createHeroTimeline,
     createSectionTransitions,
-    createHeroProjectController,
+    createHeroCarouselController,
     createBackgroundSystem,
     createThemeController,
     createSplitTextReveal,
     createHeroShaderLayer,
-    createHeroProjectFlip,
     registerBrandEasing,
   } = modules
   const { reducedMotion, desktopMotion } = motion
@@ -51,23 +50,6 @@ export function createExperienceRuntime({ modules, motion, scopeElement, heroPro
     })
   }
 
-  // Flip adapter for hero project switcher
-  const flipAdapter = createHeroProjectFlip({ Flip, gsap, reducedMotion })
-
-  const heroProjectController = createHeroProjectController({
-    scopeElement,
-    projects: heroProjects,
-    Observer: reducedMotion ? null : Observer,
-    flipAdapter,
-  })
-  cleanup.add(() => heroProjectController?.destroy())
-
-  const backgroundController = createBackgroundSystem({
-    scopeElement,
-    reducedMotion,
-  })
-  cleanup.add(() => backgroundController?.destroy())
-
   const heroShaderLayer = createHeroShaderLayer({
     scopeElement,
     ScrollTrigger,
@@ -75,6 +57,25 @@ export function createExperienceRuntime({ modules, motion, scopeElement, heroPro
     desktopMotion,
   })
   cleanup.add(() => heroShaderLayer?.destroy())
+
+  // Hero carousel controller — connected to shader layer for slide transitions
+  const heroCarouselController = createHeroCarouselController({
+    scopeElement,
+    projects: heroProjects,
+    Observer: reducedMotion ? null : Observer,
+    gsap,
+    reducedMotion,
+    onSlideChange(slug) {
+      heroShaderLayer.setActiveProject(slug)
+    },
+  })
+  cleanup.add(() => heroCarouselController?.destroy())
+
+  const backgroundController = createBackgroundSystem({
+    scopeElement,
+    reducedMotion,
+  })
+  cleanup.add(() => backgroundController?.destroy())
 
   const themeController = createThemeController({
     backgroundSystem: backgroundController,

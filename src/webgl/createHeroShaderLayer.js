@@ -4,8 +4,17 @@ import { clamp, lerp } from '../utils/math.js'
 import { getDeviceProfile } from '../utils/device.js'
 
 const THEME_TRANSITION_MS = 200
+const PROJECT_TRANSITION_MS = 600
 const DEFAULT_POINTER = { x: 0.5, y: 0.5 }
 const OFFSCREEN_POINTER = { x: -1, y: -1 }
+
+// Per-project visual palettes: [accent R, G, B], [bg R, G, B], style (0-3)
+const PROJECT_VISUALS = {
+  agentos: { accent: [0.3, 0.5, 1.0], bg: [0.04, 0.04, 0.08], style: 0 },       // Indigo/cyan
+  focusbox: { accent: [0.85, 0.6, 0.2], bg: [0.06, 0.06, 0.06], style: 1 },      // Amber
+  'trading-research-system': { accent: [0.2, 0.85, 0.4], bg: [0.02, 0.04, 0.02], style: 2 }, // Emerald
+  'research-lens': { accent: [0.6, 0.4, 0.9], bg: [0.06, 0.05, 0.08], style: 3 }, // Violet
+}
 
 const vertex = `
 attribute vec2 position;
@@ -26,6 +35,10 @@ uniform float uScroll;
 uniform float uDark;
 uniform vec2 uPointer;
 uniform vec2 uResolution;
+uniform vec3 uAccent;
+uniform vec3 uBgColor;
+uniform float uStyle;
+uniform float uTransition;
 
 varying vec2 vUv;
 
@@ -64,22 +77,70 @@ void main() {
   p.x *= aspect;
 
   float d = distance(uv, p);
-  vec2 q = vec2(
-    fbm(uv * 1.5 + uTime * 0.1),
-    fbm(uv * 1.5 + 4.0)
-  );
-  float n = fbm(uv * 3.0 + q + uTime * 0.05);
+  float time = uTime;
 
-  float ripple = smoothstep(0.4, 0.0, d) * sin(d * 35.0 - uTime * 5.0) * 0.04;
+  // Style 0: Neural synapse (agentOS) — pulsing filaments
+  // Style 1: Bokeh depth (FocusBox) — soft circles
+  // Style 2: Data grid (Quant) — scanline + grid
+  // Style 3: Prismatic (Research) — chromatic bands
+
+  float styleF = uStyle;
+  float n;
+  vec3 color;
+
+  // Base noise field — varies by style
+  vec2 q = vec2(
+    fbm(uv * (1.5 + styleF * 0.3) + time * 0.08),
+    fbm(uv * (1.5 + styleF * 0.3) + 4.0 + time * 0.02)
+  );
+  n = fbm(uv * (2.5 + styleF * 0.5) + q + time * 0.04);
+
+  // Cursor ripple — all styles
+  float ripple = smoothstep(0.4, 0.0, d) * sin(d * 35.0 - time * 5.0) * 0.04;
   n = clamp(n + ripple, 0.0, 1.0);
 
-  vec3 bg = mix(vec3(0.98, 0.976, 0.96), vec3(0.1, 0.098, 0.094), uDark);
-  vec3 ink = vec3(0.078, 0.078, 0.075);
-  vec3 terra = vec3(0.85, 0.46, 0.34);
+  // Style-specific modifications
+  if (styleF < 0.5) {
+    // agentOS: filament pulses
+    float filament = sin(uv.x * 40.0 + uv.y * 20.0 + time * 2.0) * 0.5 + 0.5;
+    filament *= smoothstep(0.5, 0.2, d);
+    n += filament * 0.06;
+  } else if (styleF < 1.5) {
+    // FocusBox: bokeh circles
+    float bokeh = 0.0;
+    for (int i = 0; i < 4; i++) {
+      vec2 center = vec2(
+        hash(vec2(float(i), 1.0)) * aspect,
+        hash(vec2(float(i), 2.0))
+      );
+      float r = hash(vec2(float(i), 3.0)) * 0.15 + 0.05;
+      float circle = smoothstep(r + 0.02, r, distance(uv, center));
+      bokeh += circle * 0.15;
+    }
+    n += bokeh;
+  } else if (styleF < 2.5) {
+    // Quant: scanline grid
+    float scanline = sin(uv.y * 120.0 + time * 3.0) * 0.5 + 0.5;
+    scanline *= 0.06;
+    float grid = step(0.96, fract(uv.x * 20.0)) + step(0.96, fract(uv.y * 20.0));
+    n += scanline + grid * 0.03;
+  } else {
+    // Research: prismatic bands
+    float band = sin(uv.x * 8.0 + uv.y * 4.0 + time * 0.5) * 0.5 + 0.5;
+    n += band * 0.08;
+  }
 
-  float alpha = n * (0.12 * (1.0 - uScroll));
-  vec3 color = mix(bg, ink, alpha);
-  color += terra * smoothstep(0.25, 0.0, d) * (0.15 * (1.0 - uScroll));
+  // Color mixing
+  vec3 bg = uBgColor;
+  float alpha = n * (0.35 * (1.0 - uScroll * 0.5));
+  color = mix(bg, bg + 0.08, alpha);
+  color += uAccent * smoothstep(0.35, 0.0, d) * (0.25 * (1.0 - uScroll));
+
+  // Accent glow in dark areas
+  color += uAccent * n * 0.12;
+
+  // Transition fade
+  color = mix(bg, color, uTransition);
 
   gl_FragColor = vec4(color, 1.0);
 }
@@ -87,6 +148,7 @@ void main() {
 
 function createNoopController() {
   return {
+    setActiveProject() {},
     setTheme() {},
     refresh() {},
     destroy() {},
@@ -144,7 +206,7 @@ export function createHeroShaderLayer({
     return createNoopController()
   }
 
-  const heroVisual = scopeElement?.querySelector?.('.js-hero-visual')
+  const heroVisual = scopeElement?.querySelector?.('.js-hero-carousel')
 
   if (!heroVisual) {
     return createNoopController()
@@ -188,12 +250,17 @@ export function createHeroShaderLayer({
     return createNoopController()
   }
 
+  const defaultVisual = PROJECT_VISUALS.agentos
   const uniforms = {
     uTime: { value: 0 },
     uPointer: { value: [DEFAULT_POINTER.x, DEFAULT_POINTER.y] },
     uScroll: { value: 0 },
     uDark: { value: getInitialDarkValue() },
     uResolution: { value: [1, 1] },
+    uAccent: { value: [...defaultVisual.accent] },
+    uBgColor: { value: [...defaultVisual.bg] },
+    uStyle: { value: defaultVisual.style },
+    uTransition: { value: 1 },
   }
 
   try {
@@ -239,6 +306,14 @@ export function createHeroShaderLayer({
   let lastFrame = 0
   let resizeObserver = null
   let scrollTriggerInstance = null
+  let activeProjectSlug = 'agentos'
+  const projectTransition = {
+    from: 1,
+    target: 1,
+    current: 1,
+    startedAt: 0,
+    pendingVisual: null,
+  }
 
   function updateResolution() {
     profile = getDeviceProfile()
@@ -278,6 +353,47 @@ export function createHeroShaderLayer({
     }
   }
 
+  function updateProjectTransition(timestamp) {
+    if (projectTransition.current === projectTransition.target && !projectTransition.pendingVisual) {
+      return
+    }
+
+    const elapsed = timestamp - projectTransition.startedAt
+    const halfDuration = PROJECT_TRANSITION_MS / 2
+
+    if (projectTransition.pendingVisual) {
+      // Phase 1: fade out
+      const fadeOutProgress = clamp(elapsed / halfDuration, 0, 1)
+      projectTransition.current = 1 - fadeOutProgress
+
+      if (fadeOutProgress >= 1) {
+        // At midpoint: swap visuals
+        const v = projectTransition.pendingVisual
+        uniforms.uAccent.value[0] = v.accent[0]
+        uniforms.uAccent.value[1] = v.accent[1]
+        uniforms.uAccent.value[2] = v.accent[2]
+        uniforms.uBgColor.value[0] = v.bg[0]
+        uniforms.uBgColor.value[1] = v.bg[1]
+        uniforms.uBgColor.value[2] = v.bg[2]
+        uniforms.uStyle.value = v.style
+        projectTransition.pendingVisual = null
+        projectTransition.startedAt = timestamp
+        projectTransition.target = 1
+      }
+    } else {
+      // Phase 2: fade in
+      const fadeInProgress = clamp(elapsed / halfDuration, 0, 1)
+      const eased = 1 - (1 - fadeInProgress) * (1 - fadeInProgress)
+      projectTransition.current = eased
+
+      if (fadeInProgress >= 1) {
+        projectTransition.current = 1
+      }
+    }
+
+    uniforms.uTransition.value = projectTransition.current
+  }
+
   function tick(timestamp) {
     if (destroyed || degraded) {
       return
@@ -304,6 +420,7 @@ export function createHeroShaderLayer({
     pointer.currentX = lerp(pointer.currentX, pointer.targetX, pointerEase)
     pointer.currentY = lerp(pointer.currentY, pointer.targetY, pointerEase)
     updateThemeProgress(timestamp)
+    updateProjectTransition(timestamp)
     renderFrame(timestamp)
   }
 
@@ -400,6 +517,19 @@ export function createHeroShaderLayer({
   animationFrame = window.requestAnimationFrame(tick)
 
   return {
+    setActiveProject(slug) {
+      if (destroyed || degraded || slug === activeProjectSlug) {
+        return
+      }
+
+      const visual = PROJECT_VISUALS[slug]
+      if (!visual) return
+
+      activeProjectSlug = slug
+      projectTransition.pendingVisual = visual
+      projectTransition.startedAt = typeof performance !== 'undefined' ? performance.now() : lastFrame
+      projectTransition.target = 0
+    },
     setTheme(theme) {
       if (destroyed || degraded) {
         return

@@ -49,17 +49,30 @@ describe('renderPage DOM contract', () => {
     })
   })
 
-  describe('hero project controller (createHeroProjectController)', () => {
-    it('emits .js-hero-projects', () => {
-      expect(document.querySelector('.js-hero-projects')).not.toBeNull()
+  describe('hero carousel (createHeroCarouselController)', () => {
+    it('emits .js-hero-carousel', () => {
+      expect(document.querySelector('.js-hero-carousel')).not.toBeNull()
     })
 
-    it('emits #hero-project-surface', () => {
-      expect(document.querySelector('#hero-project-surface')).not.toBeNull()
+    it('emits carousel track with slides', () => {
+      expect(document.querySelector('.hero-carousel__track')).not.toBeNull()
+      expect(document.querySelectorAll('[data-carousel-slide]').length).toBeGreaterThan(0)
     })
 
-    it('emits [data-active-project]', () => {
-      expect(document.querySelector('[data-active-project]')).not.toBeNull()
+    it('emits [data-active-slide]', () => {
+      expect(document.querySelector('[data-active-slide]')).not.toBeNull()
+    })
+
+    it('emits carousel controls', () => {
+      expect(document.querySelector('[data-carousel-prev]')).not.toBeNull()
+      expect(document.querySelector('[data-carousel-next]')).not.toBeNull()
+      expect(document.querySelector('[data-carousel-play-toggle]')).not.toBeNull()
+    })
+
+    it('emits ARIA carousel attributes', () => {
+      const carousel = document.querySelector('.js-hero-carousel')
+      expect(carousel.getAttribute('role')).toBe('region')
+      expect(carousel.getAttribute('aria-roledescription')).toBe('carousel')
     })
   })
 })

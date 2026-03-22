@@ -9,12 +9,11 @@ export async function loadExperienceModules() {
     { SplitText },
     { createHeroTimeline },
     { createSectionTransitions },
-    { createHeroProjectController },
+    { createHeroCarouselController },
     { createBackgroundSystem },
     { createThemeController },
     { createSplitTextReveal },
     { createHeroShaderLayer },
-    { createHeroProjectFlip },
     { registerBrandEasing },
   ] = await Promise.all([
     import('gsap'),
@@ -26,12 +25,11 @@ export async function loadExperienceModules() {
     import('gsap/SplitText'),
     import('../animations/heroTimeline'),
     import('../animations/sectionTransitions'),
-    import('./createHeroProjectController'),
+    import('./createHeroCarouselController'),
     import('../background/createBackgroundSystem'),
     import('./createThemeController'),
     import('../animations/splitTextReveal'),
     import('../webgl/createHeroShaderLayer'),
-    import('../animations/heroProjectFlip'),
     import('../animations/brandEasing'),
   ])
 
@@ -45,12 +43,11 @@ export async function loadExperienceModules() {
     SplitText,
     createHeroTimeline,
     createSectionTransitions,
-    createHeroProjectController,
+    createHeroCarouselController,
     createBackgroundSystem,
     createThemeController,
     createSplitTextReveal,
     createHeroShaderLayer,
-    createHeroProjectFlip,
     registerBrandEasing,
   }
 }

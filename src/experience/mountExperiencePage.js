@@ -22,6 +22,6 @@ export function mountExperiencePage({ content, renderPage }) {
   return {
     mobileHero,
     scopeElement: app,
-    heroVisual: document.querySelector('.js-hero-visual'),
+    heroVisual: document.querySelector('.js-hero-carousel'),
   }
 }

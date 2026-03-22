@@ -23,8 +23,8 @@ describe('createExperienceRuntime', () => {
     const refresh = vi.fn()
     const createHeroTimeline = vi.fn()
     const createSectionTransitions = vi.fn()
-    const heroProjectController = { destroy: vi.fn() }
-    const createHeroProjectController = vi.fn(() => heroProjectController)
+    const heroCarouselController = { destroy: vi.fn() }
+    const createHeroCarouselController = vi.fn(() => heroCarouselController)
     const backgroundController = { destroy: vi.fn(), setTheme: vi.fn() }
     const createBackgroundSystem = vi.fn(() => backgroundController)
     const themeController = { destroy: vi.fn(), toggle: vi.fn(), getCurrentTheme: vi.fn() }
@@ -38,7 +38,6 @@ describe('createExperienceRuntime', () => {
     const Observer = { create: vi.fn(() => ({ kill: vi.fn() })) }
     const CustomEase = { create: vi.fn() }
     const SplitText = { version: 'mock' }
-    const createHeroProjectFlip = vi.fn(() => null)
     const registerBrandEasing = vi.fn()
     const modules = {
       gsap: { registerPlugin, context },
@@ -50,12 +49,11 @@ describe('createExperienceRuntime', () => {
       SplitText,
       createHeroTimeline,
       createSectionTransitions,
-      createHeroProjectController,
+      createHeroCarouselController,
       createBackgroundSystem,
       createThemeController,
       createSplitTextReveal,
       createHeroShaderLayer,
-      createHeroProjectFlip,
       registerBrandEasing,
     }
 
@@ -71,7 +69,7 @@ describe('createExperienceRuntime', () => {
 
     expect(registerPlugin).toHaveBeenCalledTimes(1)
     expect(context).toHaveBeenCalledTimes(1)
-    expect(createHeroProjectController).toHaveBeenCalledTimes(1)
+    expect(createHeroCarouselController).toHaveBeenCalledTimes(1)
     expect(createBackgroundSystem).toHaveBeenCalledTimes(1)
     expect(createHeroTimeline).toHaveBeenCalledTimes(1)
     expect(createSectionTransitions).toHaveBeenCalledTimes(1)
@@ -80,7 +78,7 @@ describe('createExperienceRuntime', () => {
     runtime.destroy()
 
     expect(revert).toHaveBeenCalledTimes(1)
-    expect(heroProjectController.destroy).toHaveBeenCalledTimes(1)
+    expect(heroCarouselController.destroy).toHaveBeenCalledTimes(1)
     expect(backgroundController.destroy).toHaveBeenCalledTimes(1)
     expect(document.documentElement.style.getPropertyValue('--accent')).toBe('')
     expect(document.documentElement.style.getPropertyValue('--accent-soft')).toBe('')

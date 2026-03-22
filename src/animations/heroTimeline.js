@@ -118,7 +118,7 @@ export function createHeroTimeline({ gsap, reducedMotion, desktopMotion }) {
       motion.micro.at,
     )
     .fromTo(
-      '.js-hero-card',
+      '.js-hero-carousel',
       {
         y: motion.card.fromY,
         opacity: 0,

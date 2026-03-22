@@ -80,7 +80,7 @@ describe('createHeroShaderLayer', () => {
     document.documentElement.removeAttribute('data-theme')
     document.body.innerHTML = `
       <section id="hero">
-        <div class="js-hero-visual"></div>
+        <div class="js-hero-carousel"></div>
       </section>
     `
 
@@ -132,7 +132,7 @@ describe('createHeroShaderLayer', () => {
       }),
     }
 
-    const heroVisual = document.querySelector('.js-hero-visual')
+    const heroVisual = document.querySelector('.js-hero-carousel')
     vi.spyOn(heroVisual, 'getBoundingClientRect').mockReturnValue({
       left: 0,
       top: 0,

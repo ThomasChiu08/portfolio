@@ -10,7 +10,7 @@ vi.mock('../src/experience/loadExperienceModules', () => ({
     ScrollTrigger: {},
     createHeroTimeline: vi.fn(),
     createSectionTransitions: vi.fn(),
-    createHeroProjectController: vi.fn(),
+    createHeroCarouselController: vi.fn(),
     createBackgroundSystem: vi.fn(),
   }),
 }))
